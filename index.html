@@ -1,0 +1,1565 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+<title>Hukum-Hukum Dasar Kimia</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0A0F1E;
+  --surface:#111827;
+  --surface2:#1F2937;
+  --border:rgba(255,255,255,0.08);
+  --text:#F1F5F9;
+  --muted:#94A3B8;
+
+  /* per-topik */
+  --c1:#F97316; /* Lavoisier - oranye */
+  --c2:#2DD4BF; /* Proust - teal */
+  --c3:#A78BFA; /* Dalton - violet */
+  --c4:#60A5FA; /* Gay-Lussac - biru */
+  --c5:#FB7185; /* Avogadro - pink */
+  --active:var(--c1);
+}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);color:var(--text);
+  font-family:'DM Sans',sans-serif;font-size:16px;line-height:1.75;
+  overflow-x:hidden;
+}
+
+/* ═══ TOPBAR ═══════════════════════════════════════════════════ */
+#topbar{
+  position:fixed;top:0;left:0;right:0;z-index:1000;
+  background:rgba(10,15,30,0.92);backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--border);
+}
+.topbar-inner{
+  display:flex;align-items:center;gap:0;overflow-x:auto;
+  scrollbar-width:none;
+  padding:0 8px;
+}
+.topbar-inner::-webkit-scrollbar{display:none}
+.site-logo{
+  font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;
+  color:#fff;white-space:nowrap;padding:0 16px 0 8px;
+  border-right:1px solid var(--border);margin-right:8px;
+  flex-shrink:0;line-height:52px;
+}
+.topic-btn{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:6px 14px;gap:2px;cursor:pointer;border:none;background:none;
+  color:var(--muted);font-family:'DM Sans',sans-serif;font-size:11px;
+  letter-spacing:.5px;text-transform:uppercase;white-space:nowrap;
+  border-bottom:2px solid transparent;transition:.2s;height:52px;flex-shrink:0;
+}
+.topic-btn:hover{color:#fff}
+.topic-btn.active{color:#fff;border-bottom-color:var(--active)}
+.topic-btn .t-num{
+  font-size:9px;color:var(--muted);font-weight:500;
+  background:var(--surface2);border-radius:8px;padding:1px 5px;
+}
+.topic-btn.active .t-num{background:var(--active);color:#000}
+
+/* ═══ MAIN ═══════════════════════════════════════════════════ */
+#main{margin-top:52px;min-height:calc(100vh - 52px)}
+
+/* ═══ HERO ═══════════════════════════════════════════════════ */
+.topic-hero{
+  padding:3rem 2rem 2rem;text-align:center;
+  position:relative;overflow:hidden;
+  border-bottom:1px solid var(--border);
+}
+.topic-hero::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse at 50% -20%,var(--active-faint,rgba(249,115,22,.12)),transparent 65%);
+  pointer-events:none;
+}
+.hero-chip{
+  display:inline-block;background:rgba(255,255,255,.06);
+  border:1px solid var(--border);color:var(--active);
+  font-size:10px;letter-spacing:4px;text-transform:uppercase;
+  padding:5px 16px;border-radius:20px;margin-bottom:1rem;
+}
+.topic-hero h1{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(1.6rem,4vw,2.8rem);font-weight:700;
+  color:#fff;line-height:1.2;
+}
+.topic-hero h1 em{color:var(--active);font-style:italic}
+.hero-sub{margin-top:.5rem;color:var(--muted);font-size:.9rem}
+
+/* ═══ TAB SWITCHER ═══════════════════════════════════════════ */
+.tab-bar{
+  display:flex;gap:4px;padding:12px 20px;
+  background:var(--surface);border-bottom:1px solid var(--border);
+  position:sticky;top:52px;z-index:900;
+}
+.tab-btn{
+  padding:8px 20px;border:none;border-radius:8px;cursor:pointer;
+  font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;
+  background:transparent;color:var(--muted);transition:.2s;
+}
+.tab-btn:hover{background:var(--surface2);color:#fff}
+.tab-btn.active{background:var(--active);color:#000}
+
+/* ═══ PANELS ═══════════════════════════════════════════════ */
+.panel{display:none}
+.panel.active{display:block}
+
+/* ═══ MATERI PANEL ═══════════════════════════════════════ */
+.materi-body{max-width:860px;margin:0 auto;padding:2.5rem 1.5rem}
+.stag{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--active);margin-bottom:.3rem}
+.materi-body h2{
+  font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:700;color:#fff;
+  margin-bottom:1rem;padding-bottom:.5rem;border-bottom:1px solid var(--border);
+}
+.materi-body h3{font-family:'Playfair Display',serif;font-size:1.2rem;color:#fff;margin:1.5rem 0 .5rem}
+.materi-body p{color:var(--text);margin-bottom:.9rem;line-height:1.8}
+.def-box{
+  background:linear-gradient(135deg,var(--surface2),var(--surface));
+  border:1px solid var(--border);border-left:4px solid var(--active);
+  border-radius:8px;padding:1.5rem 1.75rem;margin-bottom:2rem;
+}
+.def-box p{color:#cbd5e1}
+.formula-center{
+  font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:700;
+  color:var(--active);text-align:center;margin:1rem 0;
+}
+.quote-box{
+  border-left:3px solid var(--active);padding:.85rem 1.25rem;
+  background:rgba(255,255,255,.03);border-radius:0 8px 8px 0;margin:1.5rem 0;
+}
+.quote-box p{font-family:'Playfair Display',serif;font-size:1.05rem;color:#cbd5e1;font-style:italic;margin:0}
+.quote-box cite{display:block;margin-top:.4rem;font-size:.78rem;color:var(--muted);font-style:normal}
+.info-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:1rem;margin:1.5rem 0}
+.info-card{
+  background:var(--surface);border:1px solid var(--border);border-radius:8px;
+  padding:1.1rem;border-top:3px solid var(--active);
+}
+.info-card .ic-icon{font-size:1.6rem;margin-bottom:.4rem}
+.info-card h4{font-family:'Playfair Display',serif;font-size:.95rem;color:#fff;margin-bottom:.3rem}
+.info-card p{font-size:.85rem;color:var(--muted);margin:0;line-height:1.6}
+.data-table{width:100%;border-collapse:collapse;margin:1.2rem 0}
+.data-table th{background:rgba(255,255,255,.06);color:var(--active);font-size:.78rem;
+  letter-spacing:1.5px;text-transform:uppercase;padding:.65rem 1rem;text-align:left;border-bottom:1px solid var(--border)}
+.data-table td{padding:.65rem 1rem;border-bottom:1px solid var(--border);font-size:.9rem;color:var(--text)}
+.data-table tr:last-child td{border-bottom:none}
+.data-table .hl{color:var(--active);font-weight:600}
+.sumlist{list-style:none;padding:0;margin:1rem 0}
+.sumlist li{padding:.55rem 0 .55rem 1.4rem;border-bottom:1px solid var(--border);
+  position:relative;font-size:.95rem;color:var(--text)}
+.sumlist li::before{content:'›';position:absolute;left:0;color:var(--active);font-weight:700}
+
+/* ═══ PENEMU BIO (no portrait) ═══════════════════════════════ */
+.penemu-bio{display:flex;flex-direction:column;gap:1rem;margin-bottom:2rem}
+.biodata-card{
+  background:linear-gradient(135deg,var(--surface2),var(--surface));
+  border:1px solid var(--border);border-left:4px solid var(--active);
+  border-radius:8px;padding:1rem 1.25rem;
+  display:flex;flex-direction:column;gap:.3rem;
+}
+.bc-name{font-family:'Playfair Display',serif;font-size:1.05rem;font-weight:700;color:#fff}
+.bc-row{font-size:.82rem;color:var(--muted)}
+.penemu-text{color:var(--text)}
+
+/* ═══ KALKULATOR PANEL ════════════════════════════════════════ */
+.calc-body{max-width:680px;margin:0 auto;padding:2rem 1.5rem}
+.calc-section{
+  background:var(--surface);border:1px solid var(--border);border-radius:12px;
+  padding:1.5rem;margin-bottom:1.5rem;
+}
+.calc-section h3{
+  font-family:'Playfair Display',serif;font-size:1.1rem;color:#fff;
+  margin-bottom:1rem;padding-bottom:.5rem;border-bottom:1px solid var(--border);
+}
+.calc-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:.9rem;gap:1rem}
+.calc-row label{font-size:.9rem;color:var(--muted);flex:1}
+.calc-row input{
+  width:100px;padding:.55rem .75rem;background:var(--surface2);
+  border:1px solid var(--border);border-radius:6px;color:#fff;
+  font-family:'DM Sans',sans-serif;font-size:.95rem;font-weight:600;
+  text-align:center;outline:none;transition:.2s;
+}
+.calc-row input:focus{border-color:var(--active);box-shadow:0 0 0 2px color-mix(in srgb,var(--active) 20%,transparent)}
+.calc-result{
+  background:linear-gradient(135deg,var(--surface2),var(--surface));
+  border:1px solid var(--border);border-top:3px solid var(--active);
+  border-radius:8px;padding:1.25rem;text-align:center;margin-top:.5rem;
+}
+.calc-result .cr-label{font-size:.75rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:.3rem}
+.calc-result .cr-value{font-family:'Playfair Display',serif;font-size:2rem;font-weight:700;color:var(--active)}
+.calc-result .cr-unit{font-size:.82rem;color:var(--muted);margin-top:.2rem}
+.calc-ratio-display{
+  display:flex;gap:.5rem;align-items:center;justify-content:center;
+  background:var(--surface2);border-radius:8px;padding:.9rem 1rem;margin-top:.9rem;
+  flex-wrap:wrap;
+}
+.crb{background:var(--surface);border:1px solid var(--border);border-radius:6px;
+  padding:.4rem .8rem;text-align:center;min-width:60px}
+.crb-val{font-size:1.1rem;font-weight:700;color:var(--active);display:block}
+.crb-lbl{font-size:.65rem;color:var(--muted)}
+.cr-sep{color:var(--muted);font-size:1.1rem}
+.calc-note{font-size:.82rem;color:var(--muted);text-align:center;margin-top:.6rem}
+.calc-info-card{
+  background:var(--surface);border:1px solid var(--border);border-radius:8px;
+  padding:.9rem 1rem;margin-bottom:.6rem;display:flex;gap:.75rem;align-items:flex-start;
+}
+.calc-info-card .cic-icon{font-size:1.3rem;flex-shrink:0;margin-top:.1rem}
+.calc-info-card p{font-size:.85rem;color:var(--muted);margin:0;line-height:1.6}
+.calc-info-card strong{color:#fff}
+.highlight-box{
+  background:rgba(255,255,255,.04);border-left:3px solid var(--active);
+  padding:.8rem 1rem;border-radius:0 6px 6px 0;margin:1rem 0;
+}
+.highlight-box em{color:#e2e8f0;font-style:italic}
+
+/* comp section */
+.comp-section{
+  background:var(--surface);border:1px solid var(--border);border-radius:8px;
+  padding:1.5rem;margin:1.5rem 0;
+}
+.compound-pair{margin-bottom:1.5rem}
+.compound-pair h4{font-size:.78rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:.65rem}
+.molecule-row{display:flex;align-items:center;gap:.65rem;margin-bottom:.5rem;flex-wrap:wrap}
+.mol-name{width:70px;font-family:'Playfair Display',serif;font-size:.95rem;font-weight:700;color:#fff;flex-shrink:0}
+.mol-bar{flex:1;height:28px;border-radius:4px;display:flex;overflow:hidden;min-width:160px;border:1px solid var(--border)}
+.mol-c{background:#374151;display:flex;align-items:center;justify-content:flex-end;padding-right:5px;font-size:.7rem;font-weight:500;color:#fff}
+.mol-o{background:#7C3910;display:flex;align-items:center;justify-content:flex-end;padding-right:5px;font-size:.7rem;font-weight:500;color:#FED7AA}
+.mol-n{background:#3B4563;display:flex;align-items:center;justify-content:flex-end;padding-right:5px;font-size:.7rem;font-weight:500;color:#fff}
+.mol-ratio{font-size:.78rem;color:var(--active);font-weight:500;padding-left:.4rem;white-space:nowrap}
+.ratio-compare{margin-top:.65rem;background:rgba(255,255,255,.04);border-radius:4px;padding:.55rem .9rem;font-size:.88rem;color:#cbd5e1}
+.divider-comp{border:none;border-top:1px solid var(--border);margin:1.25rem 0}
+
+/* cylinder visual Gay-Lussac */
+.cylinders-vis{display:flex;align-items:flex-end;justify-content:center;gap:1.25rem;flex-wrap:wrap;margin:1.5rem 0;padding:1rem 0}
+.cyl-group{text-align:center}
+.cyl-label-top{font-size:.72rem;color:var(--muted);margin-bottom:.3rem}
+.cyl{width:46px;border-radius:6px 6px 0 0;display:flex;align-items:flex-start;justify-content:center;padding-top:5px}
+.cyl span{font-size:.65rem;font-weight:600;color:#fff}
+.cyl-base{width:52px;height:3px;background:rgba(255,255,255,.2);border-radius:0 0 2px 2px;margin:0 auto}
+.cyl-name{font-family:'Playfair Display',serif;font-size:.85rem;font-weight:700;color:#fff;margin-top:.3rem}
+.cyl-note{font-size:.68rem;color:var(--muted)}
+.operator{font-size:1.4rem;color:var(--muted);align-self:center;margin-bottom:28px}
+
+/* bar visual Proust */
+.bar-visual-section{margin:1rem 0}
+.bar-row-vis{display:flex;align-items:center;gap:10px;margin-bottom:.65rem}
+.bar-label-vis{width:100px;font-size:.82rem;color:var(--muted);flex-shrink:0}
+.bar-track-vis{flex:1;height:24px;background:var(--surface2);border-radius:3px;overflow:hidden;display:flex;border:1px solid var(--border)}
+.bar-h-vis{background:var(--c2);height:100%;display:flex;align-items:center;justify-content:flex-end;padding-right:4px;font-size:.7rem;font-weight:500;color:#000}
+.bar-o-vis{background:#92600A;height:100%;display:flex;align-items:center;justify-content:flex-end;padding-right:4px;font-size:.7rem;font-weight:500;color:#fff}
+
+/* reaction equation */
+.reaction-eq{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:.6rem;margin:1.2rem 0;font-family:'Playfair Display',serif}
+.re-mol{text-align:center;background:var(--surface2);border:1px solid var(--border);border-radius:7px;padding:.5rem .9rem;min-width:72px}
+.re-formula{font-size:1.1rem;font-weight:700;color:var(--active)}
+.re-vol{font-size:.7rem;color:var(--muted);margin-top:2px}
+.re-arrow{font-size:1.4rem;color:var(--active)}
+.re-plus{font-size:1.1rem;color:var(--muted)}
+
+/* timeline */
+.tline{position:relative;margin:1.5rem 0}
+.tline::before{content:'';position:absolute;left:15px;top:0;bottom:0;width:1px;background:var(--border)}
+.ti{display:flex;gap:1rem;margin-bottom:1.25rem;align-items:flex-start}
+.ti-dot{width:30px;height:30px;border-radius:50%;background:var(--surface2);border:2px solid var(--active);
+  color:var(--active);font-size:.68rem;font-weight:500;display:flex;align-items:center;justify-content:center;flex-shrink:0;z-index:1;position:relative}
+.ti strong{display:block;color:#fff;font-size:.92rem;font-family:'Playfair Display',serif;font-weight:700}
+.ti span{font-size:.85rem;color:var(--muted)}
+
+/* ═══ LAB 3D PANEL ═══════════════════════════════════════ */
+.lab-panel{
+  position:relative;width:100%;
+  height:calc(100vh - 120px);
+  overflow:hidden;background:#0A0F1E;
+}
+.lab-canvas-wrap{width:100%;height:100%}
+.lab-canvas-wrap canvas{display:block;width:100%!important;height:100%!important}
+.lab-controls{
+  position:absolute;bottom:30px;left:50%;transform:translateX(-50%);
+  display:flex;gap:12px;
+}
+.lab-btn{
+  padding:12px 26px;border:none;border-radius:30px;cursor:pointer;
+  font-weight:600;font-family:'DM Sans',sans-serif;font-size:13px;
+  text-transform:uppercase;letter-spacing:.5px;transition:.25s;
+  box-shadow:0 4px 12px rgba(0,0,0,.4);
+}
+.lab-btn-main{background:var(--active);color:#000}
+.lab-btn-reset{background:var(--surface2);color:#fff;border:1px solid var(--border)}
+.lab-info-overlay{
+  position:absolute;top:12px;left:50%;transform:translateX(-50%);
+  background:rgba(10,15,30,.85);backdrop-filter:blur(8px);
+  border:1px solid var(--border);border-radius:10px;
+  padding:10px 20px;text-align:center;pointer-events:none;
+}
+.lab-info-overlay p{font-size:.88rem;color:var(--muted)}
+.lab-info-overlay strong{color:var(--active)}
+
+/* ═══ KUIS PANEL ═══════════════════════════════════════ */
+.kuis-body{max-width:780px;margin:0 auto;padding:2rem 1.5rem}
+.kuis-header{
+  background:var(--surface);border:1px solid var(--border);border-radius:10px;
+  padding:1.25rem 1.5rem;margin-bottom:1.5rem;
+}
+.progress-label{font-size:12px;color:var(--muted);text-align:right;margin-bottom:6px}
+.progress-track{height:8px;background:var(--surface2);border-radius:8px;overflow:hidden}
+.progress-fill{height:100%;width:0%;background:var(--active);border-radius:8px;transition:.35s}
+.question-block{
+  background:var(--surface);border:1px solid var(--border);border-radius:10px;
+  padding:1.25rem 1.5rem;margin-bottom:12px;
+}
+.question-block p{font-weight:600;margin-bottom:.75rem;color:#fff;line-height:1.6}
+.q-option{
+  display:block;padding:8px 12px;margin:5px 0;border-radius:7px;cursor:pointer;
+  transition:.18s;border:1px solid transparent;color:var(--text);font-size:.9rem;
+}
+.q-option:hover{background:var(--surface2);border-color:var(--border);color:#fff}
+.option-badge{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:20px;height:20px;border-radius:50%;background:rgba(255,255,255,.1);
+  font-size:11px;font-weight:600;margin-right:8px;flex-shrink:0;vertical-align:middle;
+}
+.kuis-actions{display:flex;gap:10px;justify-content:center;margin:1.5rem 0}
+.kuis-btn{
+  padding:11px 26px;border:none;border-radius:10px;cursor:pointer;
+  font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;transition:.2s;
+}
+.kuis-btn-submit{background:var(--active);color:#000}
+.kuis-btn-reset{background:var(--surface2);color:#fff;border:1px solid var(--border)}
+.kuis-result{
+  text-align:center;background:var(--surface);border:1px solid var(--border);
+  border-radius:10px;padding:1.5rem;margin-top:1rem;display:none;
+}
+.kuis-result .score{font-family:'Playfair Display',serif;font-size:2.5rem;font-weight:700;color:var(--active)}
+.kuis-result .grade{font-size:1.1rem;color:#fff;margin-top:.25rem}
+.kuis-result .detail{font-size:.88rem;color:var(--muted);margin-top:.5rem}
+.explanation-box{
+  margin-top:8px;font-size:.85rem;line-height:1.6;padding:8px 12px;
+  border-radius:6px;background:rgba(255,255,255,.04);border:1px solid var(--border);
+  display:none;
+}
+.ans-correct{color:#34d399;font-weight:600}
+.ans-wrong{color:#f87171;font-weight:600}
+
+/* ═══ TOPIC SECTIONS ═══════════════════════════════════ */
+.topic-section{display:none}
+.topic-section.active{display:block}
+
+/* ═══ SCROLLBAR ═══════════════════════════════════════ */
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:var(--surface)}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,.15);border-radius:3px}
+
+sub{vertical-align:sub;font-size:.8em}
+sup{vertical-align:super;font-size:.8em}
+hr{border:none;border-top:1px solid var(--border);margin:2rem 0}
+</style>
+</head>
+<body>
+
+<!-- ═══ TOP NAV ═══════════════════════════════════════════════ -->
+<nav id="topbar">
+  <div class="topbar-inner">
+    <div class="site-logo">⚗ Kimia Dasar</div>
+    <button class="topic-btn active" onclick="setTopic(0)" id="tbtn0">
+      <span>Kekekalan Massa</span>
+      <span class="t-num">Lavoisier</span>
+    </button>
+    <button class="topic-btn" onclick="setTopic(1)" id="tbtn1">
+      <span>Perbandingan Tetap</span>
+      <span class="t-num">Proust</span>
+    </button>
+    <button class="topic-btn" onclick="setTopic(2)" id="tbtn2">
+      <span>Perb. Berganda</span>
+      <span class="t-num">Dalton</span>
+    </button>
+    <button class="topic-btn" onclick="setTopic(3)" id="tbtn3">
+      <span>Perb. Volume</span>
+      <span class="t-num">Gay-Lussac</span>
+    </button>
+    <button class="topic-btn" onclick="setTopic(4)" id="tbtn4">
+      <span>Hipotesis Avogadro</span>
+      <span class="t-num">Avogadro</span>
+    </button>
+  </div>
+</nav>
+
+<div id="main">
+
+<!-- ═══════════════════════════════════════════════════════════════
+     TOPIK 0 — HUKUM KEKEKALAN MASSA (Lavoisier)
+═══════════════════════════════════════════════════════════════ -->
+<div class="topic-section active" id="topic0" data-color="var(--c1)">
+  <div class="topic-hero">
+    <div class="hero-chip">Hukum Dasar Kimia · I</div>
+    <h1>Hukum <em>Kekekalan Massa</em></h1>
+    <p class="hero-sub">Law of Conservation of Mass · Antoine Lavoisier · 1789</p>
+  </div>
+
+  <div class="tab-bar">
+    <button class="tab-btn active" onclick="setTab(0,0)">📖 Materi</button>
+    <button class="tab-btn" onclick="setTab(0,1)">🔬 Lab 3D</button>
+    <button class="tab-btn" onclick="setTab(0,2)">🧮 Kalkulator</button>
+    <button class="tab-btn" onclick="setTab(0,3)">📝 Kuis</button>
+  </div>
+
+  <!-- MATERI -->
+  <div class="panel active" id="panel0-0">
+    <div class="materi-body">
+      <p class="stag">Definisi</p>
+      <h2>Apa Itu Hukum Kekekalan Massa?</h2>
+      <div class="def-box">
+        <p>Hukum Kekekalan Massa menyatakan bahwa <strong>dalam sistem tertutup, massa zat sebelum reaksi selalu sama dengan massa zat sesudah reaksi.</strong> Massa tidak dapat diciptakan maupun dimusnahkan dalam reaksi kimia biasa.</p>
+        <p class="formula-center">Σ massa reaktan = Σ massa produk</p>
+        <p style="text-align:center;font-size:.87rem;color:var(--muted)">Contoh: 2Mg<sub>(s)</sub> + O<sub>2(g)</sub> → 2MgO<sub>(s)</sub> — massa tetap</p>
+      </div>
+
+      <p class="stag">Sang Penemu</p>
+      <h2>Antoine Laurent Lavoisier</h2>
+      <div class="penemu-bio">
+      <div class="biodata-card">
+          <div class="bc-name">Antoine Lavoisier</div>
+          <div class="bc-row">📅 26 Agustus 1743 — 8 Mei 1794</div>
+          <div class="bc-row">📍 Paris, Prancis</div>
+        </div>
+      <div class="penemu-text">
+        <p>Antoine Lavoisier adalah kimiawan Prancis yang dianggap sebagai "Bapak Kimia Modern." Ia merevolusi pemahaman tentang pembakaran dan komposisi udara, serta menetapkan nomenklatur kimia modern.</p>
+          <div class="highlight-box">
+            <em>"Alam tidak menciptakan maupun memusnahkan apapun — segala yang ada hanya berubah bentuk."</em>
+          </div>
+          <p>Lavoisier membuktikan bahwa pembakaran melibatkan oksigen, bukan flogiston seperti yang dipercaya sebelumnya. Ia menggunakan timbangan presisi tinggi untuk membuktikan kekekalan massa.</p>
+          <p>Karyanya <em>Traité Élémentaire de Chimie</em> (1789) menjadi buku teks kimia modern pertama, meletakkan fondasi yang digunakan hingga hari ini.</p>
+      </div>
+    </div>
+
+      <p class="stag">Contoh &amp; Bukti</p>
+      <h2>Tabel Reaksi Kekekalan Massa</h2>
+      <table class="data-table">
+        <thead><tr><th>Reaksi</th><th>Massa Reaktan</th><th>Massa Produk</th><th>Selisih</th></tr></thead>
+        <tbody>
+          <tr><td>10 g Fe + 4,3 g O₂ → Fe₂O₃</td><td>14,3 g</td><td class="hl">14,3 g</td><td class="hl">0</td></tr>
+          <tr><td>4 g H₂ + 32 g O₂ → H₂O</td><td>36 g</td><td class="hl">36 g</td><td class="hl">0</td></tr>
+          <tr><td>12 g C + 32 g O₂ → CO₂</td><td>44 g</td><td class="hl">44 g</td><td class="hl">0</td></tr>
+          <tr><td>7 g Fe + 3 g S → FeS (S bereaksi)</td><td>10 g</td><td class="hl">10 g</td><td class="hl">0</td></tr>
+        </tbody>
+      </table>
+
+      <p class="stag">Rangkuman</p>
+      <h2>Poin-Poin Kunci</h2>
+      <ul class="sumlist">
+        <li>Massa total sebelum dan sesudah reaksi selalu sama dalam sistem tertutup.</li>
+        <li>Reaksi kimia hanya mengatur ulang atom — tidak ada atom yang hilang atau tercipta.</li>
+        <li>Berlaku untuk semua jenis reaksi kimia biasa (bukan reaksi nuklir).</li>
+        <li>Menjadi dasar stoikiometri: perhitungan kuantitatif dalam kimia.</li>
+        <li>Dikemukakan oleh Lavoisier pada 1789 menggunakan eksperimen timbangan presisi.</li>
+      </ul>
+      <div class="quote-box">
+        <p>"Dalam sistem tertutup, massa zat sebelum reaksi adalah sama dengan massa zat sesudah reaksi."</p>
+        <cite>— Antoine Lavoisier, Traité Élémentaire de Chimie, 1789</cite>
+      </div>
+    </div>
+  </div>
+
+  <!-- LAB 3D -->
+  <div class="panel" id="panel0-1">
+    <div class="lab-panel">
+      <div class="lab-info-overlay">
+        <p><strong>2Mg<sub>(s)</sub> + O<sub>2(g)</sub> → 2MgO<sub>(s)</sub></strong></p>
+        <p>Mg = <span style="color:#ff7675">merah</span> &nbsp;|&nbsp; O₂ = <span style="color:#0984e3">biru</span> &nbsp;|&nbsp; MgO = <span style="color:#a29bfe">ungu</span></p>
+      </div>
+      <div class="lab-canvas-wrap" id="canvas0"></div>
+      <div class="lab-controls">
+        <button class="lab-btn lab-btn-main" id="labbtn0" onclick="startLab(0)">🔥 Mulai Reaksi</button>
+        <button class="lab-btn lab-btn-reset" onclick="resetLab(0)">↻ Reset</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- KALKULATOR -->
+  <div class="panel" id="panel0-2">
+    <div class="calc-body">
+      <p class="stag">Kalkulator</p>
+      <div class="calc-section">
+        <h3>⚖️ Kalkulator Massa Reaksi</h3>
+        <div class="calc-row"><label>Massa Magnesium (Mg) — gram</label><input type="number" id="c0-mg" value="24" oninput="calcLavoisier()"></div>
+        <div class="calc-row"><label>Massa Oksigen (O₂) — gram</label><input type="number" id="c0-o" value="16" oninput="calcLavoisier()"></div>
+        <div class="calc-result">
+          <div class="cr-label">Total Massa Produk (MgO)</div>
+          <div class="cr-value" id="c0-result">40.00</div>
+          <div class="cr-unit">gram</div>
+        </div>
+        <p class="calc-note">Σ massa reaktan = Σ massa produk — massa kekal dalam sistem tertutup</p>
+      </div>
+      <div class="calc-section">
+        <h3>📋 Fakta Hukum Kekekalan Massa</h3>
+        <div class="calc-info-card"><span class="cic-icon">⚗️</span><p><strong>Sistem Tertutup</strong> — Tidak ada materi yang masuk atau keluar selama reaksi.</p></div>
+        <div class="calc-info-card"><span class="cic-icon">⚛️</span><p><strong>Atom Kekal</strong> — Reaksi hanya menyusun ulang atom, tidak ada yang hilang atau tercipta.</p></div>
+        <div class="calc-info-card"><span class="cic-icon">🔬</span><p><strong>Dikemukakan Lavoisier (1789)</strong> — Menggunakan timbangan presisi untuk membuktikan kekekalan massa.</p></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- KUIS -->
+  <div class="panel" id="panel0-3">
+    <div class="kuis-body" id="kuis0"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     TOPIK 1 — HUKUM PERBANDINGAN TETAP (Proust)
+═══════════════════════════════════════════════════════════════ -->
+<div class="topic-section" id="topic1" data-color="var(--c2)">
+  <div class="topic-hero">
+    <div class="hero-chip">Hukum Dasar Kimia · II</div>
+    <h1>Hukum <em>Perbandingan Tetap</em></h1>
+    <p class="hero-sub">Law of Definite Proportions · Joseph Louis Proust · 1799</p>
+  </div>
+  <div class="tab-bar">
+    <button class="tab-btn active" onclick="setTab(1,0)">📖 Materi</button>
+    <button class="tab-btn" onclick="setTab(1,1)">🔬 Lab 3D</button>
+    <button class="tab-btn" onclick="setTab(1,2)">🧮 Kalkulator</button>
+    <button class="tab-btn" onclick="setTab(1,3)">📝 Kuis</button>
+  </div>
+
+  <div class="panel active" id="panel1-0">
+    <div class="materi-body">
+      <p class="stag">Definisi</p>
+      <h2>Apa Itu Hukum Perbandingan Tetap?</h2>
+      <div class="def-box">
+        <p>Hukum Perbandingan Tetap menyatakan bahwa <strong>suatu senyawa kimia selalu mengandung unsur-unsur penyusunnya dalam perbandingan massa yang tetap, tidak bergantung pada sumber atau cara pembuatannya.</strong></p>
+        <p class="formula-center">massa A : massa B = konstan</p>
+        <p style="text-align:center;font-size:.87rem;color:var(--muted)">Air (H₂O) selalu tersusun dari H dan O dengan perbandingan massa 1 : 8, di mana pun dibuat.</p>
+      </div>
+
+      <p class="stag">Sang Penemu</p>
+      <h2>Joseph Louis Proust</h2>
+      <div class="penemu-bio">
+      <div class="biodata-card">
+          <div class="bc-name">Joseph Louis Proust</div>
+          <div class="bc-row">📅 26 Sep 1754 — 5 Jul 1826</div>
+          <div class="bc-row">📍 Angers, Prancis</div>
+        </div>
+      <div class="penemu-text">
+        <p>Joseph Louis Proust adalah kimiawan Prancis yang menghabiskan sebagian besar kariernya di Spanyol. Ia terkenal atas analisis kuantitatif yang sangat teliti terhadap berbagai senyawa.</p>
+          <div class="highlight-box">
+            <em>"Alam tidak menciptakan campuran; ia mengenal hanya senyawa yang pasti dan tetap."</em>
+          </div>
+          <p>Proust mendebat teori Berthollet selama hampir 8 tahun (1799–1807). Ia membuktikan melalui ratusan eksperimen bahwa komposisi senyawa murni tidak berubah tergantung kondisi.</p>
+      </div>
+    </div>
+
+      <p class="stag">Bukti Eksperimen</p>
+      <h2>Perbandingan Massa Air dari Berbagai Sumber</h2>
+      <div class="bar-visual-section">
+        <p style="font-size:.85rem;color:var(--muted);margin-bottom:.75rem">Komposisi 100 g H₂O dari berbagai sumber:</p>
+        <div class="bar-row-vis"><span class="bar-label-vis">Air sungai</span>
+          <div class="bar-track-vis"><div class="bar-h-vis" style="width:11.2%">H</div><div class="bar-o-vis" style="width:88.8%">O</div></div>
+        </div>
+        <div class="bar-row-vis"><span class="bar-label-vis">Air hujan</span>
+          <div class="bar-track-vis"><div class="bar-h-vis" style="width:11.2%">H</div><div class="bar-o-vis" style="width:88.8%">O</div></div>
+        </div>
+        <div class="bar-row-vis"><span class="bar-label-vis">Sintesis Lab</span>
+          <div class="bar-track-vis"><div class="bar-h-vis" style="width:11.1%">H</div><div class="bar-o-vis" style="width:88.9%">O</div></div>
+        </div>
+        <div class="bar-row-vis"><span class="bar-label-vis">Air laut</span>
+          <div class="bar-track-vis"><div class="bar-h-vis" style="width:11.2%">H</div><div class="bar-o-vis" style="width:88.8%">O</div></div>
+        </div>
+        <div style="display:flex;gap:1.25rem;margin-top:.65rem;font-size:.78rem">
+          <span><span style="display:inline-block;width:11px;height:11px;background:var(--c2);border-radius:2px;margin-right:4px;vertical-align:middle"></span>Hidrogen</span>
+          <span><span style="display:inline-block;width:11px;height:11px;background:#92600A;border-radius:2px;margin-right:4px;vertical-align:middle"></span>Oksigen</span>
+        </div>
+      </div>
+
+      <h2>Senyawa Lain yang Membuktikan Hukum Proust</h2>
+      <div class="info-cards">
+        <div class="info-card"><div class="ic-icon">💧</div><h4>Air (H₂O)</h4><p>H : O = 1 : 8 berdasarkan massa</p></div>
+        <div class="info-card"><div class="ic-icon">🧂</div><h4>Garam (NaCl)</h4><p>Na : Cl = 23 : 35,5 selalu tetap</p></div>
+        <div class="info-card"><div class="ic-icon">⬛</div><h4>CO₂</h4><p>C : O = 3 : 8 (12 g C + 32 g O)</p></div>
+        <div class="info-card"><div class="ic-icon">🔶</div><h4>FeS</h4><p>Fe : S = 7 : 4 (56 g Fe + 32 g S)</p></div>
+      </div>
+
+      <ul class="sumlist">
+        <li>Senyawa murni selalu memiliki komposisi unsur yang tetap, terlepas dari sumbernya.</li>
+        <li>Berlaku untuk senyawa, bukan campuran — campuran memiliki komposisi yang bervariasi.</li>
+        <li>Menjadi landasan Teori Atom Dalton (1803).</li>
+        <li>Jika komposisi berbeda, kemungkinan sampel tidak murni atau berupa campuran.</li>
+      </ul>
+      <div class="quote-box">
+        <p>"Senyawa adalah produk alam. Tidak ada yang lebih pasti daripada komposisinya yang tidak berubah."</p>
+        <cite>— Joseph Louis Proust, 1799</cite>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel" id="panel1-1">
+    <div class="lab-panel">
+      <div class="lab-info-overlay">
+        <p><strong>2H<sub>2(g)</sub> + O<sub>2(g)</sub> → 2H<sub>2</sub>O<sub>(l)</sub></strong></p>
+        <p>H₂ = <span style="color:#0984e3">biru</span> &nbsp;|&nbsp; O₂ = <span style="color:#e17055">oranye</span> &nbsp;|&nbsp; H₂O = <span style="color:#6c5ce7">ungu</span> &nbsp;|&nbsp; Rasio H:O = 1:8</p>
+      </div>
+      <div class="lab-canvas-wrap" id="canvas1"></div>
+      <div class="lab-controls">
+        <button class="lab-btn lab-btn-main" id="labbtn1" onclick="startLab(1)">💧 Mulai Reaksi</button>
+        <button class="lab-btn lab-btn-reset" onclick="resetLab(1)">↻ Reset</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- KALKULATOR -->
+  <div class="panel" id="panel1-2">
+    <div class="calc-body">
+      <p class="stag">Kalkulator</p>
+      <div class="calc-section">
+        <h3>⚖️ Kalkulator Perbandingan Tetap (H₂O)</h3>
+        <div class="calc-row"><label>Massa H₂ — gram</label><input type="number" id="c1-h" value="2" oninput="calcProust()"></div>
+        <div class="calc-result">
+          <div class="cr-label">Massa O₂ yang Dibutuhkan</div>
+          <div class="cr-value" id="c1-o">16.00</div>
+          <div class="cr-unit">gram (Rasio H : O = 1 : 8)</div>
+        </div>
+        <div class="calc-ratio-display">
+          <div class="crb"><span class="crb-val" id="c1-rh">2</span><span class="crb-lbl">H₂ (g)</span></div>
+          <span class="cr-sep">+</span>
+          <div class="crb"><span class="crb-val" id="c1-ro">16</span><span class="crb-lbl">O₂ (g)</span></div>
+          <span class="cr-sep">→</span>
+          <div class="crb"><span class="crb-val" id="c1-rw">18</span><span class="crb-lbl">H₂O (g)</span></div>
+        </div>
+        <p class="calc-note">Rasio H:O = 1:8 selalu tetap, berapapun jumlah air yang dibuat</p>
+      </div>
+      <div class="calc-section">
+        <h3>📋 Fakta Hukum Perbandingan Tetap</h3>
+        <div class="calc-info-card"><span class="cic-icon">💧</span><p><strong>Air (H₂O)</strong> — H : O = 1 : 8 (massa), di mana pun sumbernya.</p></div>
+        <div class="calc-info-card"><span class="cic-icon">🧂</span><p><strong>Garam (NaCl)</strong> — Na : Cl = 23 : 35,5 selalu tetap.</p></div>
+        <div class="calc-info-card"><span class="cic-icon">🔬</span><p><strong>Dikemukakan Proust (1799)</strong> — Senyawa murni memiliki komposisi yang tidak berubah.</p></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel" id="panel1-3">
+    <div class="kuis-body" id="kuis1"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     TOPIK 2 — HUKUM PERBANDINGAN BERGANDA (Dalton)
+═══════════════════════════════════════════════════════════════ -->
+<div class="topic-section" id="topic2" data-color="var(--c3)">
+  <div class="topic-hero">
+    <div class="hero-chip">Hukum Dasar Kimia · III</div>
+    <h1>Hukum <em>Perbandingan Berganda</em></h1>
+    <p class="hero-sub">Law of Multiple Proportions · John Dalton · 1803</p>
+  </div>
+  <div class="tab-bar">
+    <button class="tab-btn active" onclick="setTab(2,0)">📖 Materi</button>
+    <button class="tab-btn" onclick="setTab(2,1)">🔬 Lab 3D</button>
+    <button class="tab-btn" onclick="setTab(2,2)">🧮 Kalkulator</button>
+    <button class="tab-btn" onclick="setTab(2,3)">📝 Kuis</button>
+  </div>
+
+  <div class="panel active" id="panel2-0">
+    <div class="materi-body">
+      <p class="stag">Definisi</p>
+      <h2>Apa Itu Hukum Perbandingan Berganda?</h2>
+      <div class="def-box">
+        <p>Jika <strong>dua unsur dapat membentuk lebih dari satu senyawa</strong>, maka perbandingan massa salah satu unsur yang bersenyawa dengan massa tetap unsur lain akan merupakan <strong>bilangan bulat sederhana</strong>.</p>
+        <p class="formula-center">m₁ : m₂ : m₃ = bilangan bulat sederhana</p>
+        <p style="text-align:center;font-size:.87rem;color:var(--muted)">Contoh: C dan O membentuk CO dan CO₂ — rasio oksigen 1:2</p>
+      </div>
+
+      <p class="stag">Sang Penemu</p>
+      <h2>John Dalton</h2>
+      <div class="penemu-bio">
+      <div class="biodata-card">
+          <div class="bc-name">John Dalton</div>
+          <div class="bc-row">📅 6 Sep 1766 — 27 Jul 1844</div>
+          <div class="bc-row">📍 Cumberland, Inggris</div>
+        </div>
+      <div class="penemu-text">
+        <p>John Dalton adalah kimiawan dan fisikawan Inggris, pendiri Teori Atom Modern. Ia juga dikenal karena penelitiannya tentang buta warna (Daltonisme).</p>
+          <div class="highlight-box">
+            <em>"Dalton mengubah kimia dari ilmu deskriptif menjadi ilmu kuantitatif berbasis atom — sebuah revolusi yang setara dengan Newton dalam fisika."</em>
+          </div>
+          <p>Karyanya <em>A New System of Chemical Philosophy</em> (1808) menjadi salah satu buku ilmu pengetahuan paling berpengaruh abad ke-19.</p>
+      </div>
+    </div>
+
+      <p class="stag">Visualisasi</p>
+      <h2>Karbon (C) + Oksigen (O): Dua Senyawa Berbeda</h2>
+      <div class="comp-section">
+        <div class="compound-pair">
+          <h4>CO vs CO₂</h4>
+          <div class="molecule-row">
+            <span class="mol-name">CO</span>
+            <div class="mol-bar"><div class="mol-c" style="width:42.8%">C (12g)</div><div class="mol-o" style="width:57.2%">O (16g)</div></div>
+            <span class="mol-ratio">C:O = 12:16</span>
+          </div>
+          <div class="molecule-row">
+            <span class="mol-name">CO₂</span>
+            <div class="mol-bar"><div class="mol-c" style="width:27.3%">C (12g)</div><div class="mol-o" style="width:72.7%">O (32g)</div></div>
+            <span class="mol-ratio">C:O = 12:32</span>
+          </div>
+          <div class="ratio-compare">Massa O untuk C tetap 12g → CO: 16g, CO₂: 32g → Rasio = <strong style="color:var(--active)">1 : 2</strong> ← bilangan bulat sederhana ✓</div>
+        </div>
+        <div class="divider-comp"></div>
+        <div class="compound-pair">
+          <h4>Nitrogen + Oksigen: Tiga Senyawa</h4>
+          <div class="molecule-row">
+            <span class="mol-name">NO</span>
+            <div class="mol-bar"><div class="mol-n" style="width:46.7%">N (14g)</div><div class="mol-o" style="width:53.3%">O (16g)</div></div>
+            <span class="mol-ratio">1:2</span>
+          </div>
+          <div class="molecule-row">
+            <span class="mol-name">NO₂</span>
+            <div class="mol-bar"><div class="mol-n" style="width:30.4%">N (14g)</div><div class="mol-o" style="width:69.6%">O (32g)</div></div>
+            <span class="mol-ratio">1:2:4</span>
+          </div>
+          <div class="molecule-row">
+            <span class="mol-name">N₂O</span>
+            <div class="mol-bar"><div class="mol-n" style="width:63.6%">N (28g)</div><div class="mol-o" style="width:36.4%">O (16g)</div></div>
+            <span class="mol-ratio">ratio O = 1:2:4</span>
+          </div>
+          <div class="ratio-compare">Untuk N tetap 14g: N₂O → 8g, NO → 16g, NO₂ → 32g → Rasio = <strong style="color:var(--active)">1 : 2 : 4</strong> ✓</div>
+        </div>
+      </div>
+
+      <h2>Tabel Senyawa C dan O</h2>
+      <table class="data-table">
+        <thead><tr><th>Senyawa</th><th>Massa C (g)</th><th>Massa O (g)</th><th>Rasio O (C=12g)</th><th>Perbandingan</th></tr></thead>
+        <tbody>
+          <tr><td>CO</td><td>12</td><td>16</td><td class="hl">16</td><td class="hl">1</td></tr>
+          <tr><td>CO₂</td><td>12</td><td>32</td><td class="hl">32</td><td class="hl">2</td></tr>
+          <tr><td>Rasio</td><td>—</td><td>—</td><td class="hl">16:32</td><td class="hl" style="font-size:1.05rem">1:2 ✓</td></tr>
+        </tbody>
+      </table>
+
+      <div class="tline">
+        <div class="ti"><div class="ti-dot">1787</div><div><strong>Mencatat Cuaca</strong><span>Dalton memulai jurnal meteorologis 57 tahun — ketelitian ini membentuk cara eksperimennya.</span></div></div>
+        <div class="ti"><div class="ti-dot">1800</div><div><strong>Hukum Tekanan Parsial</strong><span>Dalton merumuskan bahwa gas-gas berperilaku secara independen dalam campuran.</span></div></div>
+        <div class="ti"><div class="ti-dot">1803</div><div><strong>Hukum Perbandingan Berganda</strong><span>Menganalisis CO dan CO₂, Dalton melihat perbandingan massa oksigen selalu bilangan bulat.</span></div></div>
+        <div class="ti"><div class="ti-dot">1808</div><div><strong>A New System of Chemical Philosophy</strong><span>Teori atom dan hukum perbandingan berganda dipublikasikan secara formal.</span></div></div>
+      </div>
+
+      <ul class="sumlist">
+        <li>Dua unsur dapat membentuk lebih dari satu senyawa dengan komposisi berbeda.</li>
+        <li>Perbandingan massa unsur kedua (dengan unsur pertama tetap) selalu bilangan bulat sederhana.</li>
+        <li>Contoh klasik: CO dan CO₂, rasio massa O adalah 1:2 untuk massa C yang sama.</li>
+        <li>Mendukung gagasan atom bergabung dalam perbandingan bilangan bulat tetap.</li>
+      </ul>
+      <div class="quote-box">
+        <p>"Atom-atom dari unsur yang sama identik satu sama lain dalam semua hal, dan berbeda dari atom unsur lain dalam massa dan sifatnya."</p>
+        <cite>— John Dalton, A New System of Chemical Philosophy, 1808</cite>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel" id="panel2-1">
+    <div class="lab-panel">
+      <div class="lab-info-overlay">
+        <p><strong>C + O₂ → CO / CO₂</strong></p>
+        <p>C = <span style="color:#e17055">oranye</span> &nbsp;|&nbsp; O₂ sedikit = <span style="color:#0984e3">biru</span> &nbsp;|&nbsp; O₂ banyak = <span style="color:#00cec9">cyan</span></p>
+      </div>
+      <div class="lab-canvas-wrap" id="canvas2"></div>
+      <div class="lab-controls">
+        <button class="lab-btn lab-btn-main" id="labbtn2" onclick="startLab(2)">⚗ Mulai Reaksi</button>
+        <button class="lab-btn lab-btn-reset" onclick="resetLab(2)">↻ Reset</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- KALKULATOR -->
+  <div class="panel" id="panel2-2">
+    <div class="calc-body">
+      <p class="stag">Kalkulator</p>
+      <div class="calc-section">
+        <h3>⚗️ Kalkulator Perbandingan Berganda</h3>
+        <div class="calc-row"><label>Massa O₂ untuk CO — gram</label><input type="number" id="c2-o1" value="16" oninput="calcDalton()"></div>
+        <div class="calc-row"><label>Massa O₂ untuk CO₂ — gram</label><input type="number" id="c2-o2" value="32" oninput="calcDalton()"></div>
+        <div class="calc-result">
+          <div class="cr-label">Perbandingan O₂ (CO : CO₂)</div>
+          <div class="cr-value" id="c2-ratio">1 : 2</div>
+          <div class="cr-unit">bilangan bulat sederhana</div>
+        </div>
+        <p class="calc-note">Massa C tetap 12 g — perbandingan oksigen selalu bilangan bulat sederhana</p>
+      </div>
+      <div class="calc-section">
+        <h3>📊 Contoh Pasangan Senyawa</h3>
+        <table class="data-table">
+          <thead><tr><th>Senyawa</th><th>C (g)</th><th>O (g)</th><th>Rasio O</th></tr></thead>
+          <tbody>
+            <tr><td>CO</td><td>12</td><td>16</td><td class="hl">1</td></tr>
+            <tr><td>CO₂</td><td>12</td><td>32</td><td class="hl">2</td></tr>
+          </tbody>
+        </table>
+        <div class="calc-info-card" style="margin-top:.8rem"><span class="cic-icon">🔬</span><p><strong>Dikemukakan Dalton (1803)</strong> — Perbandingan bilangan bulat menunjukkan atom bergabung dalam jumlah utuh, bukan pecahan.</p></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel" id="panel2-3">
+    <div class="kuis-body" id="kuis2"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     TOPIK 3 — HUKUM PERBANDINGAN VOLUME (Gay-Lussac)
+═══════════════════════════════════════════════════════════════ -->
+<div class="topic-section" id="topic3" data-color="var(--c4)">
+  <div class="topic-hero">
+    <div class="hero-chip">Hukum Dasar Kimia · IV</div>
+    <h1>Hukum <em>Perbandingan Volume</em></h1>
+    <p class="hero-sub">Law of Combining Volumes · Joseph Louis Gay-Lussac · 1808</p>
+  </div>
+  <div class="tab-bar">
+    <button class="tab-btn active" onclick="setTab(3,0)">📖 Materi</button>
+    <button class="tab-btn" onclick="setTab(3,1)">🔬 Lab 3D</button>
+    <button class="tab-btn" onclick="setTab(3,2)">🧮 Kalkulator</button>
+    <button class="tab-btn" onclick="setTab(3,3)">📝 Kuis</button>
+  </div>
+
+  <div class="panel active" id="panel3-0">
+    <div class="materi-body">
+      <p class="stag">Definisi</p>
+      <h2>Apa Itu Hukum Perbandingan Volume?</h2>
+      <div class="def-box">
+        <p>Pada suhu dan tekanan yang sama, <strong>volume gas-gas yang bereaksi dan volume gas hasil reaksi berbanding sebagai bilangan bulat dan sederhana.</strong></p>
+        <p class="formula-center">V₁ : V₂ : V₃ = bilangan bulat sederhana</p>
+        <p style="text-align:center;font-size:.87rem;color:var(--muted)">Berlaku hanya untuk zat berwujud gas, pada kondisi T dan P yang sama.</p>
+      </div>
+
+      <p class="stag">Sang Penemu</p>
+      <h2>Joseph Louis Gay-Lussac</h2>
+      <div class="penemu-bio">
+      <div class="biodata-card">
+          <div class="bc-name">Joseph Louis Gay-Lussac</div>
+          <div class="bc-row">📅 6 Des 1778 — 9 Mei 1850</div>
+          <div class="bc-row">📍 Saint-Léonard, Prancis</div>
+        </div>
+      <div class="penemu-text">
+        <p>Gay-Lussac adalah fisikawan dan kimiawan Prancis yang terkenal dengan berbagai kontribusi pada ilmu gas. Ia adalah salah satu ilmuwan paling produktif di awal abad ke-19.</p>
+          <div class="highlight-box">
+            <em>"Gay-Lussac tidak hanya duduk di laboratorium — ia terbang dengan balon udara ke ketinggian 7.016 meter demi mengambil sampel udara (1804). Sebuah rekor dunia pada zamannya."</em>
+          </div>
+          <p>Selain hukum perbandingan volume, Gay-Lussac juga menemukan hubungan tekanan dan suhu gas (P ∝ T), serta turut mengidentifikasi boron sebagai unsur baru.</p>
+      </div>
+    </div>
+
+      <p class="stag">Visualisasi Reaksi</p>
+      <h2>H₂ + O₂ → H₂O</h2>
+      <div class="reaction-eq">
+        <div class="re-mol"><div class="re-formula">2H₂</div><div class="re-vol">2 volume</div></div>
+        <span class="re-plus">+</span>
+        <div class="re-mol"><div class="re-formula">O₂</div><div class="re-vol">1 volume</div></div>
+        <span class="re-arrow">→</span>
+        <div class="re-mol" style="background:rgba(16,185,129,.12);border-color:rgba(16,185,129,.3)">
+          <div class="re-formula" style="color:#34d399">2H₂O</div><div class="re-vol">2 volume</div>
+        </div>
+      </div>
+      <p style="text-align:center;font-size:.85rem;color:var(--muted)">Rasio volume: H₂ : O₂ : H₂O = <strong style="color:var(--c4)">2 : 1 : 2</strong> ✓</p>
+      <div class="cylinders-vis">
+        <div class="cyl-group"><div class="cyl-label-top">Hidrogen</div><div class="cyl" style="height:72px;background:#3B82F6"><span>H₂</span></div><div class="cyl-base"></div><div class="cyl-name">2 vol</div></div>
+        <div class="operator">+</div>
+        <div class="cyl-group"><div class="cyl-label-top">Oksigen</div><div class="cyl" style="height:36px;background:#F59E0B"><span>O₂</span></div><div class="cyl-base"></div><div class="cyl-name">1 vol</div></div>
+        <div class="operator">→</div>
+        <div class="cyl-group"><div class="cyl-label-top">Uap Air</div><div class="cyl" style="height:72px;background:#10B981"><span>H₂O</span></div><div class="cyl-base"></div><div class="cyl-name">2 vol</div></div>
+      </div>
+
+      <h2>Tabel Berbagai Reaksi Gas</h2>
+      <table class="data-table">
+        <thead><tr><th>Reaksi</th><th>Vol A</th><th>Vol B</th><th>Vol Produk</th><th>Rasio</th></tr></thead>
+        <tbody>
+          <tr><td>H₂ + Cl₂ → 2HCl</td><td>1 H₂</td><td>1 Cl₂</td><td class="hl">2 HCl</td><td class="hl">1:1:2</td></tr>
+          <tr><td>N₂ + 3H₂ → 2NH₃</td><td>1 N₂</td><td>3 H₂</td><td class="hl">2 NH₃</td><td class="hl">1:3:2</td></tr>
+          <tr><td>2H₂ + O₂ → 2H₂O</td><td>2 H₂</td><td>1 O₂</td><td class="hl">2 H₂O</td><td class="hl">2:1:2</td></tr>
+          <tr><td>2CO + O₂ → 2CO₂</td><td>2 CO</td><td>1 O₂</td><td class="hl">2 CO₂</td><td class="hl">2:1:2</td></tr>
+        </tbody>
+      </table>
+
+      <div class="info-cards">
+        <div class="info-card"><div class="ic-icon">🚀</div><h4>Bahan Bakar Roket</h4><p>Rasio H₂ cair dan O₂ cair untuk pembakaran optimal.</p></div>
+        <div class="info-card"><div class="ic-icon">🏭</div><h4>Sintesis Amonia</h4><p>Proses Haber-Bosch: N₂:H₂ = 1:3 dioptimalkan berdasarkan hukum ini.</p></div>
+        <div class="info-card"><div class="ic-icon">⚡</div><h4>Sel Bahan Bakar</h4><p>Fuel cell H₂-O₂ menggunakan rasio gas yang tepat untuk listrik bersih.</p></div>
+      </div>
+
+      <ul class="sumlist">
+        <li>Volume gas-gas yang bereaksi dan produk berbanding bilangan bulat sederhana.</li>
+        <li>Hukum berlaku hanya pada kondisi T dan P yang sama.</li>
+        <li>Dikemukakan Gay-Lussac tahun 1808 setelah observasi berbagai reaksi gas.</li>
+        <li>Menjadi dasar bagi Hipotesis Avogadro (1811).</li>
+      </ul>
+      <div class="quote-box">
+        <p>"Volume gas-gas yang bereaksi dan hasil reaksi, diukur pada suhu dan tekanan yang sama, selalu berbanding sebagai bilangan bulat yang sangat sederhana."</p>
+        <cite>— Joseph Louis Gay-Lussac, Mémoires de la Société d'Arcueil, 1808</cite>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel" id="panel3-1">
+    <div class="lab-panel">
+      <div class="lab-info-overlay">
+        <p><strong>2H<sub>2(g)</sub> + O<sub>2(g)</sub> → 2H<sub>2</sub>O<sub>(g)</sub></strong></p>
+        <p>H₂ = <span style="color:#60a5fa">biru</span> &nbsp;|&nbsp; O₂ = <span style="color:#e17055">oranye</span> &nbsp;|&nbsp; H₂O = <span style="color:#a78bfa">ungu</span> &nbsp;|&nbsp; Rasio 2:1:2</p>
+      </div>
+      <div class="lab-canvas-wrap" id="canvas3"></div>
+      <div class="lab-controls">
+        <button class="lab-btn lab-btn-main" id="labbtn3" onclick="startLab(3)">💨 Mulai Reaksi</button>
+        <button class="lab-btn lab-btn-reset" onclick="resetLab(3)">↻ Reset</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- KALKULATOR -->
+  <div class="panel" id="panel3-2">
+    <div class="calc-body">
+      <p class="stag">Kalkulator</p>
+      <div class="calc-section">
+        <h3>📊 Kalkulator Volume Gas (H₂ + O₂ → H₂O)</h3>
+        <div class="calc-row"><label>Volume H₂ — Liter</label><input type="number" id="c3-h" value="2" oninput="calcGayLussac()"></div>
+        <div class="calc-result">
+          <div class="cr-label">Volume O₂ yang Dibutuhkan</div>
+          <div class="cr-value" id="c3-o">1.0</div>
+          <div class="cr-unit">Liter &nbsp;|&nbsp; Rasio H₂ : O₂ : H₂O = 2 : 1 : 2</div>
+        </div>
+        <div class="calc-ratio-display">
+          <div class="crb"><span class="crb-val" id="c3-rh">2</span><span class="crb-lbl">H₂ (L)</span></div>
+          <span class="cr-sep">+</span>
+          <div class="crb"><span class="crb-val" id="c3-ro">1</span><span class="crb-lbl">O₂ (L)</span></div>
+          <span class="cr-sep">→</span>
+          <div class="crb"><span class="crb-val" id="c3-rw">2</span><span class="crb-lbl">H₂O (L)</span></div>
+        </div>
+        <p class="calc-note">Syarat: semua gas diukur pada suhu dan tekanan yang sama</p>
+      </div>
+      <div class="calc-section">
+        <h3>📋 Contoh Rasio Reaksi Gas</h3>
+        <table class="data-table">
+          <thead><tr><th>Reaksi</th><th>Rasio Volume</th></tr></thead>
+          <tbody>
+            <tr><td>H₂ + Cl₂ → 2HCl</td><td class="hl">1 : 1 : 2</td></tr>
+            <tr><td>N₂ + 3H₂ → 2NH₃</td><td class="hl">1 : 3 : 2</td></tr>
+            <tr><td>2H₂ + O₂ → 2H₂O</td><td class="hl">2 : 1 : 2</td></tr>
+            <tr><td>2CO + O₂ → 2CO₂</td><td class="hl">2 : 1 : 2</td></tr>
+          </tbody>
+        </table>
+        <div class="calc-info-card" style="margin-top:.8rem"><span class="cic-icon">🔬</span><p><strong>Dikemukakan Gay-Lussac (1808)</strong> — Hanya berlaku untuk zat berwujud gas pada kondisi T dan P yang sama.</p></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel" id="panel3-3">
+    <div class="kuis-body" id="kuis3"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     TOPIK 4 — HIPOTESIS AVOGADRO
+═══════════════════════════════════════════════════════════════ -->
+<div class="topic-section" id="topic4" data-color="var(--c5)">
+  <div class="topic-hero">
+    <div class="hero-chip">Hukum Dasar Kimia · V</div>
+    <h1><em>Hipotesis</em> Avogadro</h1>
+    <p class="hero-sub">Avogadro's Hypothesis · Amedeo Avogadro · 1811</p>
+  </div>
+  <div class="tab-bar">
+    <button class="tab-btn active" onclick="setTab(4,0)">📖 Materi</button>
+    <button class="tab-btn" onclick="setTab(4,1)">🔬 Lab 3D</button>
+    <button class="tab-btn" onclick="setTab(4,2)">🧮 Kalkulator</button>
+    <button class="tab-btn" onclick="setTab(4,3)">📝 Kuis</button>
+  </div>
+
+  <div class="panel active" id="panel4-0">
+    <div class="materi-body">
+      <p class="stag">Definisi</p>
+      <h2>Apa Itu Hipotesis Avogadro?</h2>
+      <div class="def-box">
+        <p>Hipotesis Avogadro menyatakan bahwa <strong>pada suhu dan tekanan yang sama, gas-gas yang volumenya sama mengandung jumlah molekul yang sama banyaknya</strong>, terlepas dari jenis gasnya.</p>
+        <p class="formula-center">V sama, T sama, P sama → n sama</p>
+        <p style="text-align:center;font-size:.87rem;color:var(--muted)">1 mol gas apa pun = 22,4 L pada STP = 6,022 × 10²³ molekul</p>
+      </div>
+
+      <p class="stag">Fakta Menarik</p>
+      <div class="info-cards">
+        <div class="info-card"><div class="ic-icon">📦</div><h4>Bilangan Avogadro</h4><p>1 mol = 6,022 × 10²³ partikel (N<sub>A</sub>)</p></div>
+        <div class="info-card"><div class="ic-icon">🌡️</div><h4>Volume Molar STP</h4><p>Pada 0°C, 1 atm: 1 mol gas = 22,4 liter</p></div>
+        <div class="info-card"><div class="ic-icon">⚖️</div><h4>Massa Berbeda, Volume Sama</h4><p>H₂ (2g) = O₂ (32g) = CO₂ (44g) — volume sama di STP</p></div>
+        <div class="info-card"><div class="ic-icon">🔬</div><h4>Dasar Kimia Modern</h4><p>Menjembatani hukum Gay-Lussac dengan konsep mol.</p></div>
+      </div>
+
+      <p class="stag">Perjalanan Sejarah</p>
+      <h2>Mengapa Sempat Ditolak?</h2>
+      <div class="def-box">
+        <p>Avogadro mengusulkan bahwa molekul unsur seperti H₂ dan O₂ bersifat <strong>diatomik</strong> — dapat terpecah menjadi atom-atom. Hal ini bertentangan dengan model atom Dalton yang menganggap atom tidak terbagi, sehingga hipotesis ini <strong>ditolak selama hampir 50 tahun</strong>.</p>
+        <p>Baru pada Kongres Kimia Internasional Karlsruhe (1860), Stanislao Cannizzaro membuktikan validitas hipotesis Avogadro secara meyakinkan.</p>
+      </div>
+
+      <div class="tline">
+        <div class="ti"><div class="ti-dot">1808</div><div><strong>Gay-Lussac merumuskan hukum volume</strong><span>Perbandingan volume gas selalu bilangan bulat — tapi mengapa?</span></div></div>
+        <div class="ti"><div class="ti-dot">1811</div><div><strong>Avogadro mengusulkan hipotesisnya</strong><span>Volume sama → jumlah molekul sama. Molekul unsur bisa diatomik.</span></div></div>
+        <div class="ti"><div class="ti-dot">~1820</div><div><strong>Ditolak komunitas ilmiah</strong><span>Bertentangan dengan teori atom Dalton tentang atom yang tidak terpisahkan.</span></div></div>
+        <div class="ti"><div class="ti-dot">1860</div><div><strong>Diterima di Kongres Karlsruhe</strong><span>Cannizzaro membuktikan hipotesis Avogadro benar berdasarkan data eksperimen.</span></div></div>
+      </div>
+
+      <ul class="sumlist">
+        <li>Gas-gas berbeda dengan volume sama pada T, P yang sama mengandung jumlah molekul yang sama.</li>
+        <li>Menjadi landasan konsep mol dan volume molar gas.</li>
+        <li>Menjelaskan mengapa perbandingan volume Gay-Lussac selalu bilangan bulat.</li>
+        <li>Bilangan Avogadro (N<sub>A</sub> = 6,022 × 10²³) dinamai untuk menghormatinya.</li>
+      </ul>
+      <div class="quote-box">
+        <p>"Pada suhu dan tekanan yang sama, gas-gas yang volumenya sama mengandung jumlah molekul yang sama banyaknya."</p>
+        <cite>— Amedeo Avogadro, Journal de Physique, 1811</cite>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel" id="panel4-1">
+    <div class="lab-panel">
+      <div class="lab-info-overlay">
+        <p><strong>Volume sama → Jumlah molekul sama</strong></p>
+        <p>Gas A = <span style="color:#ff7675">merah</span> (12 mol) &nbsp;|&nbsp; Gas B = <span style="color:#74b9ff">biru</span> (12 mol)</p>
+      </div>
+      <div class="lab-canvas-wrap" id="canvas4"></div>
+      <div class="lab-controls">
+        <button class="lab-btn lab-btn-main" id="labbtn4" onclick="startLab(4)">🔬 Tampilkan Pulsasi</button>
+        <button class="lab-btn lab-btn-reset" onclick="resetLab(4)">↻ Reset</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- KALKULATOR -->
+  <div class="panel" id="panel4-2">
+    <div class="calc-body">
+      <p class="stag">Kalkulator</p>
+      <div class="calc-section">
+        <h3>🔬 Kalkulator Mol &amp; Molekul (STP)</h3>
+        <div class="calc-row"><label>Volume Gas pada STP — Liter</label><input type="number" id="c4-v" value="22.4" oninput="calcAvogadro()"></div>
+        <div class="calc-result">
+          <div class="cr-label">Jumlah Mol Gas</div>
+          <div class="cr-value" id="c4-mol">1.000</div>
+          <div class="cr-unit">mol &nbsp;|&nbsp; 1 mol = 22,4 L pada STP</div>
+        </div>
+        <div style="margin-top:.9rem;background:var(--surface2);border-radius:8px;padding:.9rem 1rem;text-align:center;font-size:.9rem;color:var(--muted)">
+          Jumlah Molekul ≈ <strong style="color:var(--active);font-size:1.05rem" id="c4-count">6.022 × 10²³</strong>
+        </div>
+        <p class="calc-note">Pada STP (0°C, 1 atm) — berlaku untuk semua jenis gas ideal</p>
+      </div>
+      <div class="calc-section">
+        <h3>📋 Fakta Avogadro</h3>
+        <div class="calc-info-card"><span class="cic-icon">📦</span><p><strong>1 mol = 6,022 × 10²³ partikel</strong> — Bilangan Avogadro (N<sub>A</sub>)</p></div>
+        <div class="calc-info-card"><span class="cic-icon">🌡️</span><p><strong>Pada STP (0°C, 1 atm)</strong>: 1 mol gas apa pun = 22,4 liter</p></div>
+        <div class="calc-info-card"><span class="cic-icon">⚖️</span><p><strong>H₂ (2 g) = O₂ (32 g) = CO₂ (44 g)</strong> — volume sama di STP, jumlah molekul sama</p></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel" id="panel4-3">
+    <div class="kuis-body" id="kuis4"></div>
+  </div>
+</div>
+
+</div><!-- #main -->
+
+<!-- ═══ SCRIPT ══════════════════════════════════════════════════ -->
+<script>
+// ─── COLOR MAPPING ───────────────────────────────────────────────
+const TOPIC_COLORS = ['#F97316','#2DD4BF','#A78BFA','#60A5FA','#FB7185'];
+
+// ─── NAV LOGIC ───────────────────────────────────────────────────
+let currentTopic = 0;
+const labInited = [false,false,false,false,false];
+const labData   = [null,null,null,null,null];
+
+function setTopic(idx) {
+  document.querySelectorAll('.topic-section').forEach((s,i) => s.classList.toggle('active', i===idx));
+  document.querySelectorAll('.topic-btn').forEach((b,i) => {
+    b.classList.toggle('active', i===idx);
+    b.style.setProperty('--active', TOPIC_COLORS[i]);
+  });
+  document.documentElement.style.setProperty('--active', TOPIC_COLORS[idx]);
+  currentTopic = idx;
+  // lazy init lab when first shown
+  const activePanelId = `panel${idx}-1`;
+  if (document.getElementById(activePanelId)?.classList.contains('active') && !labInited[idx]) {
+    initLab(idx);
+  }
+}
+
+function setTab(topicIdx, tabIdx) {
+  const section = document.getElementById(`topic${topicIdx}`);
+  section.querySelectorAll('.tab-btn').forEach((b,i) => b.classList.toggle('active', i===tabIdx));
+  section.querySelectorAll('.panel').forEach((p,i) => p.classList.toggle('active', i===tabIdx));
+  if (tabIdx === 1 && !labInited[topicIdx]) {
+    setTimeout(() => initLab(topicIdx), 50);
+  }
+}
+
+// ─── LAB 3D ──────────────────────────────────────────────────────
+function makeMat(color) {
+  return new THREE.MeshPhongMaterial({ color });
+}
+
+function initLab(idx) {
+  if (labInited[idx]) return;
+  labInited[idx] = true;
+
+  const wrap = document.getElementById(`canvas${idx}`);
+  const W = wrap.clientWidth, H = wrap.clientHeight;
+
+  const scene    = new THREE.Scene();
+  scene.background = new THREE.Color(0x0A0F1E);
+  const camera   = new THREE.PerspectiveCamera(45, W/H, 0.1, 1000);
+  camera.position.set(0, 0, idx === 1 ? 22 : idx === 4 ? 26 : 22);
+  const renderer = new THREE.WebGLRenderer({ antialias: true });
+  renderer.setSize(W, H);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  wrap.appendChild(renderer.domElement);
+
+  scene.add(new THREE.AmbientLight(0xffffff, 0.8));
+  const pt = new THREE.PointLight(0xffffff, 0.5);
+  pt.position.set(5,10,10); scene.add(pt);
+
+  const g = new THREE.Group();
+  const particles = {primary:[], secondary:[], product:[], extra:[]};
+  let ribbon = null;
+
+  if (idx === 0) {
+    // Kekekalan Massa: Mg ribbon + O2 clouds
+    ribbon = new THREE.Mesh(new THREE.BoxGeometry(2,0.15,0.8), makeMat(0xff7675));
+    ribbon.position.set(0,-3.5,0); g.add(ribbon);
+    for(let i=0;i<30;i++){
+      const c=new THREE.Mesh(new THREE.SphereGeometry(0.15,16,16),makeMat(0x0984e3));
+      c.position.set((Math.random()-.5)*6,(Math.random()-.5)*8,(Math.random()-.5)*6);
+      c.userData.s={x:(Math.random()-.5)*.02,y:(Math.random()-.5)*.02,z:(Math.random()-.5)*.02};
+      particles.secondary.push(c); g.add(c);
+    }
+  } else if (idx === 1) {
+    // Perb Tetap: H2 biru + O2 oranye
+    for(let i=0;i<2;i++){
+      const c=new THREE.Mesh(new THREE.SphereGeometry(0.15,16,16),makeMat(0x0984e3));
+      c.position.set((Math.random()-.5)*5,(Math.random()-.5)*7,(Math.random()-.5)*5);
+      particles.primary.push(c); g.add(c);
+    }
+    for(let i=0;i<16;i++){
+      const c=new THREE.Mesh(new THREE.SphereGeometry(0.3,16,16),makeMat(0xe17055));
+      c.position.set((Math.random()-.5)*5,(Math.random()-.5)*7,(Math.random()-.5)*5);
+      particles.secondary.push(c); g.add(c);
+    }
+  } else if (idx === 2) {
+    // Perb Berganda: C center + O kiri biru + O kanan cyan
+    ribbon = new THREE.Mesh(new THREE.SphereGeometry(0.9,32,32),makeMat(0xe17055));
+    g.add(ribbon);
+    for(let i=0;i<15;i++){
+      const c=new THREE.Mesh(new THREE.SphereGeometry(0.18,16,16),makeMat(0x0984e3));
+      c.position.set(-3.5+(Math.random()-.5)*2.5,(Math.random()-.5)*6,(Math.random()-.5)*4);
+      particles.primary.push(c); g.add(c);
+    }
+    for(let i=0;i<15;i++){
+      const c=new THREE.Mesh(new THREE.SphereGeometry(0.18,16,16),makeMat(0x00cec9));
+      c.position.set(3.5+(Math.random()-.5)*2.5,(Math.random()-.5)*6,(Math.random()-.5)*4);
+      particles.secondary.push(c); g.add(c);
+    }
+  } else if (idx === 3) {
+    // Gay-Lussac: H2 biru + O2 oranye → H2O ungu
+    for(let i=0;i<20;i++){
+      const c=new THREE.Mesh(new THREE.SphereGeometry(0.13,16,16),makeMat(0x60a5fa));
+      c.position.set(-3+(Math.random()-.5)*2,(Math.random()-.5)*7,(Math.random()-.5)*4);
+      c.userData.s={x:(Math.random()-.5)*.02,y:(Math.random()-.5)*.02,z:(Math.random()-.5)*.02};
+      particles.primary.push(c); g.add(c);
+    }
+    for(let i=0;i<10;i++){
+      const c=new THREE.Mesh(new THREE.SphereGeometry(0.2,16,16),makeMat(0xe17055));
+      c.position.set(3+(Math.random()-.5)*2,(Math.random()-.5)*7,(Math.random()-.5)*4);
+      c.userData.s={x:(Math.random()-.5)*.02,y:(Math.random()-.5)*.02,z:(Math.random()-.5)*.02};
+      particles.secondary.push(c); g.add(c);
+    }
+  } else if (idx === 4) {
+    // Avogadro: mols A (merah kiri) + mols B (biru kanan)
+    for(let i=0;i<12;i++){
+      const c=new THREE.Mesh(new THREE.SphereGeometry(0.18,16,16),makeMat(0xff7675));
+      c.position.set(-5+(Math.random()-.5)*3.5,(Math.random()-.5)*6,(Math.random()-.5)*3.5);
+      c.userData.s={x:(Math.random()-.5)*.03,y:(Math.random()-.5)*.03,z:(Math.random()-.5)*.03};
+      particles.primary.push(c); g.add(c);
+    }
+    for(let i=0;i<12;i++){
+      const c=new THREE.Mesh(new THREE.SphereGeometry(0.18,16,16),makeMat(0x74b9ff));
+      c.position.set(5+(Math.random()-.5)*3.5,(Math.random()-.5)*6,(Math.random()-.5)*3.5);
+      c.userData.s={x:(Math.random()-.5)*.03,y:(Math.random()-.5)*.03,z:(Math.random()-.5)*.03};
+      particles.secondary.push(c); g.add(c);
+    }
+  }
+
+  scene.add(g);
+  labData[idx] = { scene, camera, renderer, g, particles, ribbon, reacted:false, interval:null };
+
+  (function animate() {
+    const ld = labData[idx];
+    if (!ld) return;
+    requestAnimationFrame(animate);
+    if (!ld.reacted) {
+      // bounce for topics 3 and 4
+      if (idx === 3) {
+        ld.particles.primary.forEach(c => {
+          c.position.x+=c.userData.s.x; c.position.y+=c.userData.s.y; c.position.z+=c.userData.s.z;
+          if(Math.abs(c.position.x)>3.5) c.userData.s.x*=-1;
+          if(Math.abs(c.position.y)>4.5) c.userData.s.y*=-1;
+          if(Math.abs(c.position.z)>3.5) c.userData.s.z*=-1;
+        });
+        ld.particles.secondary.forEach(c => {
+          c.position.x+=c.userData.s.x; c.position.y+=c.userData.s.y; c.position.z+=c.userData.s.z;
+          if(Math.abs(c.position.x)>3.5) c.userData.s.x*=-1;
+          if(Math.abs(c.position.y)>4.5) c.userData.s.y*=-1;
+          if(Math.abs(c.position.z)>3.5) c.userData.s.z*=-1;
+        });
+      }
+      if (idx === 4) {
+        ld.particles.primary.forEach(c => {
+          c.position.x+=c.userData.s.x; c.position.y+=c.userData.s.y; c.position.z+=c.userData.s.z;
+          if(Math.abs(c.position.x+5)>2.2) c.userData.s.x*=-1;
+          if(Math.abs(c.position.y)>3.5) c.userData.s.y*=-1;
+          if(Math.abs(c.position.z)>2.2) c.userData.s.z*=-1;
+        });
+        ld.particles.secondary.forEach(c => {
+          c.position.x+=c.userData.s.x; c.position.y+=c.userData.s.y; c.position.z+=c.userData.s.z;
+          if(Math.abs(c.position.x-5)>2.2) c.userData.s.x*=-1;
+          if(Math.abs(c.position.y)>3.5) c.userData.s.y*=-1;
+          if(Math.abs(c.position.z)>2.2) c.userData.s.z*=-1;
+        });
+      }
+    }
+    ld.g.rotation.y += (idx===4)?0.004:0.005;
+    ld.renderer.render(ld.scene, ld.camera);
+  })();
+
+  window.addEventListener('resize', () => {
+    const w2=wrap.clientWidth, h2=wrap.clientHeight;
+    if(labData[idx]){
+      labData[idx].camera.aspect=w2/h2;
+      labData[idx].camera.updateProjectionMatrix();
+      labData[idx].renderer.setSize(w2,h2);
+    }
+  });
+}
+
+function startLab(idx) {
+  const ld = labData[idx];
+  if (!ld || ld.reacted) return;
+  ld.reacted = true;
+  document.getElementById(`labbtn${idx}`).style.display='none';
+
+  let progress = 0;
+
+  if (idx === 0) {
+    // Kekekalan Massa
+    ld.interval = setInterval(() => {
+      progress += 0.04;
+      ld.ribbon.material.color.lerp(new THREE.Color(0x6c5ce7), 0.1);
+      ld.ribbon.scale.set(1+progress*.6, 1+progress*4, 1+progress*.6);
+      ld.particles.secondary.forEach(c => {
+        c.position.lerp(ld.ribbon.position, 0.1);
+        if(c.position.distanceTo(ld.ribbon.position)<0.5) c.visible=false;
+      });
+      if(progress>=4){
+        clearInterval(ld.interval);
+        alert("✅ Reaksi Selesai!\n\n2Mg + O₂ → 2MgO\n\nMassa Mg + Massa O₂ = Massa MgO\n(Hukum Kekekalan Massa terbukti!)");
+      }
+    }, 50);
+  } else if (idx === 1) {
+    // Perb Tetap
+    const ctr = new THREE.Vector3(0,0,0);
+    ld.interval = setInterval(() => {
+      progress += 0.03;
+      ld.particles.primary.forEach(c => {
+        c.position.lerp(ctr, 0.08);
+        if(c.position.distanceTo(ctr)<0.5) c.visible=false;
+      });
+      ld.particles.secondary.forEach(c => {
+        c.position.lerp(ctr, 0.05);
+        if(c.position.distanceTo(ctr)<0.5) c.visible=false;
+      });
+      if(progress>=3 && ld.particles.product.length===0){
+        for(let i=0;i<8;i++){
+          const c=new THREE.Mesh(new THREE.SphereGeometry(0.22,16,16),makeMat(0x6c5ce7));
+          const angle=(i/8)*Math.PI*2;
+          c.position.set(Math.cos(angle)*2,Math.sin(angle)*2,0);
+          ld.particles.product.push(c); ld.g.add(c);
+        }
+      }
+      if(progress>=5){
+        clearInterval(ld.interval);
+        alert("✅ Reaksi Selesai!\n\n2H₂ + O₂ → 2H₂O\n\nH : O = 1 : 8 (massa)\nBerapapun jumlahnya, rasio SELALU TETAP!\n(Hukum Proust terbukti!)");
+      }
+    }, 50);
+  } else if (idx === 2) {
+    // Perb Berganda
+    const tA=new THREE.Vector3(-1.2,0,0), tB=new THREE.Vector3(1.2,0,0);
+    ld.interval = setInterval(() => {
+      progress += 0.03;
+      ld.particles.primary.forEach(c => {
+        c.position.lerp(tA,0.07);
+        if(c.position.distanceTo(tA)<0.4) c.visible=false;
+      });
+      ld.particles.secondary.forEach(c => {
+        c.position.lerp(tB,0.07);
+        if(c.position.distanceTo(tB)<0.4) c.visible=false;
+      });
+      ld.ribbon.material.color.lerp(new THREE.Color(0x00b894), 0.05);
+      ld.ribbon.scale.setScalar(1+progress*.3);
+      if(progress>=4){
+        clearInterval(ld.interval);
+        alert("✅ Reaksi Selesai!\n\nC + O (sedikit) → CO\nC + O (banyak) → CO₂\n\nRasio O = 1 : 2\n(Hukum Dalton terbukti!)");
+      }
+    }, 50);
+  } else if (idx === 3) {
+    // Gay-Lussac
+    const ctr = new THREE.Vector3(0,0,0);
+    ld.interval = setInterval(() => {
+      progress += 0.03;
+      ld.particles.primary.forEach(c => {
+        c.position.lerp(ctr,0.06);
+        if(c.position.distanceTo(ctr)<0.5) c.visible=false;
+      });
+      ld.particles.secondary.forEach(c => {
+        c.position.lerp(ctr,0.06);
+        if(c.position.distanceTo(ctr)<0.5) c.visible=false;
+      });
+      if(progress>=3 && ld.particles.product.length===0){
+        for(let i=0;i<12;i++){
+          const c=new THREE.Mesh(new THREE.SphereGeometry(0.18,16,16),makeMat(0xa78bfa));
+          const angle=(i/12)*Math.PI*2;
+          c.position.set(Math.cos(angle)*2.5,Math.sin(angle)*2.5,0);
+          ld.particles.product.push(c); ld.g.add(c);
+        }
+      }
+      if(progress>=5){
+        clearInterval(ld.interval);
+        alert("✅ Reaksi Selesai!\n\n2H₂ + O₂ → 2H₂O\n\nPerbandingan Volume = 2 : 1 : 2\n(Hukum Gay-Lussac terbukti!)");
+      }
+    }, 50);
+  } else if (idx === 4) {
+    // Avogadro pulsate
+    let t = 0;
+    ld.interval = setInterval(() => {
+      t += 0.05;
+      const scale = 1 + Math.sin(t*3)*0.05;
+      ld.particles.primary.forEach(c => c.scale.setScalar(scale));
+      ld.particles.secondary.forEach(c => c.scale.setScalar(scale));
+      if(t>=5){
+        clearInterval(ld.interval);
+        alert("✅ Demonstrasi Selesai!\n\nKedua wadah memiliki:\n✓ Volume SAMA\n✓ Suhu & Tekanan SAMA\n✓ Jumlah Molekul SAMA (12 molekul)\n\n— Hipotesis Avogadro");
+      }
+    }, 50);
+  }
+}
+
+function resetLab(idx) {
+  if (labData[idx] && labData[idx].interval) clearInterval(labData[idx].interval);
+  const wrap = document.getElementById(`canvas${idx}`);
+  wrap.innerHTML = '';
+  labData[idx] = null;
+  labInited[idx] = false;
+  document.getElementById(`labbtn${idx}`).style.display = '';
+  initLab(idx);
+}
+
+// ─── QUIZ DATA ────────────────────────────────────────────────────
+const QUIZ_DATA = [
+  // 0: Kekekalan Massa
+  [
+    {q:"1. Sebanyak 10 g Fe dibakar menghasilkan 14,3 g Fe₂O₃. Massa oksigen yang bereaksi adalah...",opts:["3,0 g","3,3 g","4,3 g","4,0 g","5,0 g"],ans:2,exp:"massa O₂ = massa produk − massa reaktan = 14,3 − 10 = 4,3 g (Hukum Kekekalan Massa)."},
+    {q:"2. CaCO₃ → CaO + CO₂. Jika 100 g CaCO₃ menghasilkan 56 g CaO, massa CO₂ adalah...",opts:["40 g","42 g","44 g","46 g","54 g"],ans:2,exp:"Massa CO₂ = 100 − 56 = 44 g, sesuai hukum kekekalan massa."},
+    {q:"3. Kayu 500 g dibakar dalam wadah tertutup. Massa abu + gas = ?",opts:["Kurang dari 500 g","Tepat 500 g","Lebih dari 500 g","Bergantung suhu","Tidak bisa ditentukan"],ans:1,exp:"Dalam sistem tertutup, total massa selalu tetap = 500 g (hukum kekekalan massa)."},
+    {q:"4. 2H₂ + O₂ → 2H₂O. Jika 4 g H₂ menghasilkan 36 g H₂O, massa O₂ yang bereaksi adalah...",opts:["28 g","30 g","32 g","34 g","36 g"],ans:2,exp:"Massa O₂ = 36 − 4 = 32 g."},
+    {q:"5. Mengapa pembakaran kayu di udara terbuka seolah kehilangan massa?",opts:["Hukum tidak berlaku untuk organik","Massa berubah jadi energi","Gas CO₂ dan H₂O lepas ke udara","Abu lebih ringan karena suhu","O₂ tidak dihitung"],ans:2,exp:"Gas CO₂ dan uap H₂O yang terbentuk lepas ke udara, sehingga sisa abu tampak lebih ringan."},
+    {q:"6. 25 g AgNO₃ + 25 g NaCl → endapan AgCl. Massa campuran setelah reaksi?",opts:["Kurang dari 50 g","Tepat 50 g","Lebih dari 50 g","Bergantung suhu","Bergantung konsentrasi"],ans:1,exp:"Total massa sistem = 25 + 25 = 50 g (tidak ada gas lepas dalam sistem tertutup)."},
+    {q:"7. 8 g S + 8 g O₂ → SO₂. Massa SO₂ yang terbentuk?",opts:["8 g","10 g","14 g","16 g","18 g"],ans:3,exp:"8 g S = 0,25 mol, 8 g O₂ = 0,25 mol, rasio 1:1 sesuai stoikiometri → SO₂ = 8+8 = 16 g."},
+    {q:"8. 12 g Mg + O₂ → 20 g MgO. Massa O dan rasio Mg:O adalah...",opts:["6 g; 2:1","8 g; 3:2","10 g; 6:5","4 g; 1:3","8 g; 2:3"],ans:1,exp:"Massa O = 20 − 12 = 8 g. Rasio Mg:O = 12:8 = 3:2."},
+    {q:"9. Fe + S → FeS. 7 g Fe + 4 g S, sisa 1 g S. Massa FeS?",opts:["8 g","9 g","10 g","11 g","12 g"],ans:2,exp:"S bereaksi = 4−1 = 3 g. Massa FeS = 7+3 = 10 g."},
+    {q:"10. Mengapa hukum kekekalan massa berlaku pada reaksi kimia?",opts:["Energi selalu dilepas","Jumlah molekul tetap","Volume larutan tetap","Atom hanya berpindah dan bergabung kembali, tidak ada yang hilang","Suhu selalu konstan"],ans:3,exp:"Atom tidak diciptakan atau dimusnahkan — hanya berpindah dan bergabung ulang, sehingga massa total tetap sama."}
+  ],
+  // 1: Perb Tetap
+  [
+    {q:"1. Air mengandung 88,9% O dan 11,1% H. Dari 36 g air, massa H yang diperoleh?",opts:["2 g","3 g","4 g","5 g","6 g"],ans:2,exp:"Massa H = 11,1% × 36 g = 4 g. Komposisi ini selalu tetap (Hukum Proust)."},
+    {q:"2. Senyawa X: 40% Ca, 12% C, 48% O. Dalam 25 g senyawa X, massa O?",opts:["8 g","10 g","12 g","15 g","20 g"],ans:2,exp:"Massa O = 48% × 25 g = 12 g."},
+    {q:"3. Mengapa perbandingan massa unsur dalam senyawa selalu tetap?",opts:["Setiap unsur massanya berbeda","Reaksi selalu menghasilkan produk sama","Setiap molekul memiliki rumus kimia yang sama","Massa atom tidak berubah","Senyawa terdiri dari dua unsur"],ans:2,exp:"Karena setiap molekul senyawa memiliki rumus kimia yang tetap, perbandingan massanya pun selalu sama."},
+    {q:"4. 18 g H₂O → 2 g H + 16 g O; 9 g H₂O → 1 g H + 8 g O. Kesimpulan?",opts:["Massa berbeda maka komposisi berbeda","Sampel I lebih murni","H:O = 1:8 pada keduanya, membuktikan perbandingan tetap","Perbandingan berubah sesuai massa","Tidak ada kesimpulan"],ans:2,exp:"Kedua sampel menunjukkan H:O = 1:8 (massa), membuktikan hukum perbandingan tetap."},
+    {q:"5. Tiga sampel CaCO₃: 50 g, 100 g, 200 g. Persentase Ca masing-masing? (Ar Ca=40, Mr=100)",opts:["20%,40%,80%","40%,40%,40%","40%,20%,10%","Bergantung sumber","Berbeda karena massanya berbeda"],ans:1,exp:"% Ca = (40/100)×100% = 40% pada semua sampel — komposisi senyawa murni selalu tetap."},
+    {q:"6. 6 g H₂ + 32 g O₂ (rasio H:O=1:8). H₂O yang terbentuk dan sisa?",opts:["38 g air, tidak ada sisa","36 g air, sisa O₂ 2 g","36 g air, sisa H₂ 2 g","32 g air, sisa H₂ 6 g","54 g air, sisa O₂"],ans:2,exp:"Untuk 32 g O₂, H₂ yang dibutuhkan = 4 g. Sisa H₂ = 2 g. H₂O = 36 g."},
+    {q:"7. Ilmuwan A: 7 g Fe + 4 g S → 11 g FeS. Ilmuwan B: 14 g Fe + 8 g S → 22 g FeS. Analisis?",opts:["Senyawa berbeda karena lab berbeda","Fe:S = 7:4 pada keduanya, mendukung hukum perbandingan tetap","B lebih efisien","Komposisi bergantung kondisi","Tidak bisa dibandingkan"],ans:1,exp:"Perbandingan Fe:S = 7:4 pada kedua percobaan. Hukum perbandingan tetap berlaku."},
+    {q:"8. Glukosa C₆H₁₂O₆ (Mr=180). Persentase massa C? (Ar C=12)",opts:["33,3%","36%","40%","45%","46,7%"],ans:2,exp:"% C = (6×12/180)×100% = 72/180×100% = 40%."},
+    {q:"9. Dua sampel 'besi sulfida' dari sumber berbeda memiliki rasio Fe:S sedikit berbeda. Kesimpulan paling logis?",opts:["Hukum Proust tidak berlaku untuk logam","Hanya berlaku suhu tertentu","Keduanya pasti identik","Salah satu mungkin tidak murni atau berupa campuran","Dalton salah"],ans:3,exp:"Jika senyawa murni, perbandingan massa pasti tetap. Perbedaan menunjukkan adanya pengotor."},
+    {q:"10. Seseorang klaim membuat NH₃ dengan 80% N dan 20% H (normalnya 82,35% N). Yang paling mungkin?",opts:["Ia membuat varian baru","Hukum Proust bisa dilanggar","Tekanan mempengaruhi komposisi","Ia salah analisis atau sampelnya mengandung pengotor","Suhu tinggi mengubah komposisi"],ans:3,exp:"Hukum Proust menyatakan komposisi senyawa murni selalu tetap. Perbedaan menunjukkan kesalahan analisis atau ketidakmurnian."}
+  ],
+  // 2: Perb Berganda
+  [
+    {q:"1. CO (O per 12g C = 16g) dan CO₂ (O per 12g C = 32g). Perbandingan O dalam CO:CO₂?",opts:["1:3","2:1","1:2","3:1","1:4"],ans:2,exp:"Perbandingan massa O = 16:32 = 1:2, bilangan bulat sederhana sesuai hukum Dalton."},
+    {q:"2. S + O₂ membentuk SO₂ dan SO₃. Untuk massa S yang sama, perbandingan massa O dalam SO₂:SO₃?",opts:["1:2","3:2","2:3","1:3","2:1"],ans:2,exp:"SO₂ mengandung 2 O, SO₃ mengandung 3 O → rasio massa O = 2:3."},
+    {q:"3. N₂O, NO, NO₂ — untuk massa N yang sama, perbandingan massa O?",opts:["1:2:3","1:2:4","1:3:4","2:3:4","1:4:8"],ans:1,exp:"Normalisasi untuk N sama: N₂O:NO:NO₂ = 1:2:4."},
+    {q:"4. Pernyataan yang mendukung hukum Dalton untuk CO dan CO₂?",opts:["Massa O berbeda maka senyawa pasti berbeda","Perbandingan O di A dan B = 1:2 (bilangan bulat sederhana)","Setiap senyawa unik dan tidak terkait","Hanya berlaku untuk senyawa karbon","Massa C sama membuktikan C adalah unsur yang sama"],ans:1,exp:"Hukum Dalton: perbandingan massa O (16:32 = 1:2) untuk massa C tetap adalah bilangan bulat sederhana."},
+    {q:"5. FeCl₂ dan FeCl₃. Untuk massa Fe yang sama, perbandingan massa Cl dalam FeCl₂:FeCl₃?",opts:["1:1","1:2","2:3","3:2","1:3"],ans:2,exp:"FeCl₂: 2 Cl, FeCl₃: 3 Cl. Untuk Fe tetap, rasio Cl = 2:3."},
+    {q:"6. Mengapa hukum perbandingan berganda membuktikan atom bersifat diskret?",opts:["Massa atom selalu bilangan bulat","Ditemukan oleh Dalton","Senyawa selalu dari dua unsur","Perbandingan bilangan bulat menunjukkan atom bergabung dalam jumlah utuh, bukan pecahan","Atom tidak bisa dilihat"],ans:3,exp:"Perbandingan bilangan bulat mencerminkan atom bergabung dalam jumlah utuh (1, 2, 3...)."},
+    {q:"7. Cu₂O dan CuO. Untuk 16 g O: Cu₂O = 127 g Cu, CuO = 63,5 g Cu. Perbandingan Cu dalam Cu₂O:CuO?",opts:["1:2","1:3","3:2","2:1","3:1"],ans:3,exp:"Cu dalam Cu₂O:CuO = 127:63,5 = 2:1. Bilangan bulat sederhana."},
+    {q:"8. Unsur X membentuk dua senyawa dengan Y: Senyawa I (X:Y=3:4), Senyawa II (X:Y=3:8). Perbandingan massa Y untuk X yang sama?",opts:["4:8","1:3","2:3","1:2","3:4"],ans:3,exp:"Untuk X=3 (sama): Y Senyawa I=4; Y Senyawa II=8. Perbandingan = 4:8 = 1:2."},
+    {q:"9. CH₄, C₂H₆, C₂H₄, C₂H₂ — untuk 24 g karbon, perbandingan massa H?",opts:["4:3:2:1","8:6:4:2","1:2:3:4","2:3:4:8","6:4:3:2"],ans:1,exp:"24 g C = 2 mol C. CH₄: 8 g H; C₂H₆: 6 g H; C₂H₄: 4 g H; C₂H₂: 2 g H → 8:6:4:2 = 4:3:2:1."},
+    {q:"10. Data nitrogen-oksida yang mendukung hukum perbandingan berganda (N tetap = 14 g)?",opts:["N₂O(8g) dan NO(12g) → 2:3","N₂O(8g) dan NO₂(32g) → 1:4","N₂O(6g) dan NO₂(24g) → 1:4","N₂O(8g) dan NO(16g) → 1:2","N₂O(8g) dan NO₃(48g) → 1:6"],ans:3,exp:"Untuk N=14 g: N₂O = 8 g O; NO = 16 g O. Perbandingan = 8:16 = 1:2 (bilangan bulat sederhana)."}
+  ],
+  // 3: Perb Volume
+  [
+    {q:"1. H₂(g) + Cl₂(g) → 2HCl(g). Jika 10 L H₂ bereaksi sempurna, volume HCl?",opts:["5 L","10 L","15 L","20 L","40 L"],ans:3,exp:"Rasio H₂:HCl = 1:2. Volume HCl = 2 × 10 L = 20 L."},
+    {q:"2. N₂ + 3H₂ → 2NH₃. Jika 6 L N₂ dan 15 L H₂, gas yang bersisa dan NH₃?",opts:["H₂ sisa 3 L, NH₃=12 L","N₂ sisa 1 L, NH₃=10 L","H₂ sisa 6 L, NH₃=6 L","Tidak ada sisa, NH₃=14 L","N₂ sisa 2 L, NH₃=8 L"],ans:1,exp:"Untuk 15 L H₂, N₂ bereaksi = 5 L → sisa N₂ = 1 L. NH₃ = (2/3)×15 = 10 L."},
+    {q:"3. C₃H₈ + 5O₂ → 3CO₂ + 4H₂O(g). Volume total produk jika 2 L propana dibakar?",opts:["10 L","12 L","14 L","16 L","18 L"],ans:2,exp:"CO₂ = 3×2 = 6 L; H₂O = 4×2 = 8 L. Total = 14 L."},
+    {q:"4. Syarat keberlakuan Hukum Gay-Lussac?",opts:["Tekanan sangat tinggi","Semua gas diukur pada T dan P yang sama","Gas harus gas mulia","Wadah harus tertutup","Massa gas > 1 g"],ans:1,exp:"Perbandingan volume valid jika semua gas diukur pada kondisi T dan P yang sama."},
+    {q:"5. 2SO₂ + O₂ → 2SO₃. 20 L SO₂ + 20 L O₂, SO₂ habis. Volume total gas setelah reaksi?",opts:["20 L","25 L","30 L","35 L","40 L"],ans:2,exp:"Butuh 10 L O₂ untuk 20 L SO₂. Sisa O₂ = 10 L. SO₃ = 20 L. Total = 30 L."},
+    {q:"6. Pernyataan SALAH tentang 2H₂ + O₂ → 2H₂O (rasio 2:1:2)?",opts:["Volume mengikuti koefisien reaksi","10 L H₂ butuh 5 L O₂","Volume H₂O selalu dua kali volume O₂","Volume H₂O = volume H₂ + volume O₂","Rasio hanya berlaku jika T dan P sama"],ans:3,exp:"Volume H₂O = 2 (dari 2H₂+1O₂), bukan 3. Volume gas tidak dijumlahkan secara sederhana."},
+    {q:"7. 2 L gas A + 3 L gas B → 4 L gas C saja. Rumus empiris C?",opts:["AB","A₂B₃","A₃B₂","A₄B₃","A₁B₂"],ans:1,exp:"A:B:C = 2:3:4. Tiap 4 mol C dari 2 mol A dan 3 mol B → rumus A₂B₃."},
+    {q:"8. 2C₂H₂ + 5O₂ → 4CO₂ + 2H₂O(g). Volume O₂ dan CO₂ jika 10 L C₂H₂ dibakar?",opts:["O₂=20L, CO₂=25L","O₂=25L, CO₂=20L","O₂=50L, CO₂=40L","O₂=25L, CO₂=10L","O₂=20L, CO₂=40L"],ans:1,exp:"O₂ = (5/2)×10 = 25 L; CO₂ = (4/2)×10 = 20 L."},
+    {q:"9. 30 L CO + 30 L O₂ → (2CO + O₂ → 2CO₂). Volume dan komposisi gas setelah reaksi?",opts:["30 L CO₂ saja","60 L CO₂","20 L CO₂+10 L O₂","30 L CO₂+15 L O₂ sisa","15 L CO₂+15 L O₂"],ans:3,exp:"Untuk 30 L CO, butuh 15 L O₂. Sisa O₂ = 15 L. CO₂ = 30 L. Total = 45 L."},
+    {q:"10. Mengapa hukum Gay-Lussac hanya berlaku untuk GAS?",opts:["Gas lebih mudah diukur","Reaksi hanya terjadi fase gas","Padatan massanya lebih besar","Pada gas ideal (T,P tetap), V ∝ n. Padatan/cairan tidak demikian","Padatan tidak memiliki tekanan"],ans:3,exp:"Berdasarkan PV=nRT, pada T dan P tetap, V ∝ n. Untuk padatan/cairan, volume bergantung pada kerapatan masing-masing."}
+  ],
+  // 4: Avogadro
+  [
+    {q:"1. Hipotesis Avogadro menyatakan pada T dan P sama, gas-gas volume sama mengandung...",opts:["Massa yang sama","Jumlah atom yang sama","Berat molekul yang sama","Jumlah molekul yang sama","Tekanan parsial yang sama"],ans:3,exp:"Avogadro menyatakan jumlah molekul sama pada T, P, dan volume yang sama, tidak bergantung jenis gasnya."},
+    {q:"2. Volume molar STP = 22,4 L/mol. Jumlah molekul dalam 44,8 L gas N₂ pada STP?",opts:["3,01×10²³","6,02×10²³","9,03×10²³","1,204×10²⁴","2,408×10²⁴"],ans:3,exp:"44,8 L ÷ 22,4 = 2 mol. Jumlah = 2 × 6,02×10²³ = 1,204×10²⁴ molekul."},
+    {q:"3. Gas X massa jenis 2× gas Y pada T,P sama, volume sama. Hubungan Mr X dan Y?",opts:["Mr X = Mr Y","Mr X = ½ Mr Y","Mr X = 2 Mr Y","Mr X = 4 Mr Y","Tidak ada hubungan"],ans:2,exp:"Jumlah mol sama (volume sama). Massa X = 2× massa Y → Mr X = 2 × Mr Y."},
+    {q:"4. Mengapa hipotesis Avogadro menjelaskan hukum Gay-Lussac?",opts:["Avogadro murid Gay-Lussac","Tekanan selalu sama","Gas bersifat ideal","V ∝ n pada T,P tetap → perbandingan volume = perbandingan mol = koefisien reaksi (bilangan bulat)","Massa tidak bergantung jenis"],ans:3,exp:"V ∝ n pada T,P tetap → perbandingan volume = perbandingan molekul = koefisien reaksi yang bilangan bulat."},
+    {q:"5. H₂ + Cl₂ → 2HCl. Kesimpulan tentang struktur H₂ dan Cl₂?",opts:["Atom tunggal","HCl massa sama dengan H₂","H₂ dan Cl₂ adalah molekul diatomik yang terpecah saat bereaksi","Semua molekul gas diatomik","Cl₂ lebih reaktif"],ans:2,exp:"Agar 1 mol H₂ + 1 mol Cl₂ → 2 mol HCl, setiap molekul harus diatomik dan terpecah."},
+    {q:"6. 4 g He (Mr=4) dan 28 g N₂ (Mr=28) pada kondisi sama memiliki...",opts:["Volume berbeda","Jumlah molekul berbeda","Massa jenis sama","Volume dan jumlah molekul yang sama","Energi kinetik rata-rata berbeda"],ans:3,exp:"4 g He = 1 mol; 28 g N₂ = 1 mol. Jumlah mol sama → volume sama dan jumlah molekul = Nₐ."},
+    {q:"7. CO₂ massa jenis 1,964 g/L pada STP. Massa molar CO₂?",opts:["22 g/mol","28 g/mol","32 g/mol","40 g/mol","44 g/mol"],ans:4,exp:"Mr = 1,964 g/L × 22,4 L/mol ≈ 44 g/mol."},
+    {q:"8. 3 L gas A = 8,1 g; 3 L gas B = 5,4 g pada kondisi sama. Kesimpulan BENAR?",opts:["Jumlah molekul berbeda","A lebih berat maka volume lebih kecil","Volume sama berarti massa sama","Mol sama, Mr A:Mr B = 8,1:5,4 = 3:2","Mr A = Mr B karena kondisi sama"],ans:3,exp:"Volume sama pada T,P sama → mol sama. Mr A/Mr B = massa A/massa B = 8,1/5,4 = 3/2."},
+    {q:"9. Mengapa hipotesis Avogadro sempat ditolak?",opts:["Bukan ilmuwan Eropa Barat","Tidak ada peralatan ukur volume","Bertentangan dengan ide Dalton bahwa molekul unsur tidak mungkin diatomik","Tidak menyertakan data eksperimen","Gay-Lussac sudah mengumumkan lebih dulu"],ans:2,exp:"Avogadro mengusulkan H₂ dan O₂ yang bisa terpecah, bertentangan dengan model atom Dalton."},
+    {q:"10. Berapa volume 3,01×10²³ molekul SO₂ pada STP?",opts:["5,6 L","11,2 L","22,4 L","33,6 L","44,8 L"],ans:1,exp:"3,01×10²³ = 0,5 mol. Volume = 0,5 × 22,4 = 11,2 L."}
+  ]
+];
+
+const LABELS = ['A','B','C','D','E'];
+
+function buildKuis(topicIdx) {
+  const container = document.getElementById(`kuis${topicIdx}`);
+  if (!container || container.dataset.built) return;
+  container.dataset.built = '1';
+
+  const questions = QUIZ_DATA[topicIdx];
+  let html = `
+    <div class="kuis-header">
+      <div class="progress-label"><span id="plabel${topicIdx}">0 / ${questions.length} dijawab</span></div>
+      <div class="progress-track"><div class="progress-fill" id="pfill${topicIdx}"></div></div>
+    </div>
+    <div id="qlist${topicIdx}">
+  `;
+  questions.forEach((item, qi) => {
+    html += `<div class="question-block"><p>${item.q}</p>`;
+    item.opts.forEach((opt, oi) => {
+      html += `<label class="q-option"><input type="radio" name="t${topicIdx}q${qi}" value="${oi}" onchange="updateProgress(${topicIdx})"> <span class="option-badge">${LABELS[oi]}</span>${opt}</label>`;
+    });
+    html += `<div class="explanation-box" id="exp${topicIdx}-${qi}"></div></div>`;
+  });
+  html += `</div>
+    <div class="kuis-actions">
+      <button class="kuis-btn kuis-btn-submit" onclick="submitKuis(${topicIdx})">✅ Selesai & Nilai</button>
+      <button class="kuis-btn kuis-btn-reset" onclick="resetKuis(${topicIdx})">🔄 Reset</button>
+    </div>
+    <div class="kuis-result" id="kresult${topicIdx}">
+      <div class="score" id="kscore${topicIdx}"></div>
+      <div class="grade" id="kgrade${topicIdx}"></div>
+      <div class="detail" id="kdetail${topicIdx}"></div>
+    </div>
+  `;
+  container.innerHTML = html;
+}
+
+function updateProgress(topicIdx) {
+  const q = QUIZ_DATA[topicIdx];
+  const answered = document.querySelectorAll(`input[name^="t${topicIdx}q"]:checked`).length;
+  document.getElementById(`pfill${topicIdx}`).style.width = (answered/q.length*100)+'%';
+  document.getElementById(`plabel${topicIdx}`).textContent = `${answered} / ${q.length} dijawab`;
+}
+
+function submitKuis(topicIdx) {
+  const questions = QUIZ_DATA[topicIdx];
+  let score=0, unanswered=0;
+  questions.forEach((item,qi) => {
+    const sel = document.querySelector(`input[name="t${topicIdx}q${qi}"]:checked`);
+    const expEl = document.getElementById(`exp${topicIdx}-${qi}`);
+    expEl.style.display = 'block';
+    if (sel) {
+      if (parseInt(sel.value)===item.ans) {
+        score++;
+        expEl.innerHTML = `<span class="ans-correct">✔ Benar!</span> — ${item.exp}`;
+      } else {
+        expEl.innerHTML = `<span class="ans-wrong">✘ Salah</span> (Jawaban: <strong>${LABELS[item.ans]}</strong>) — ${item.exp}`;
+      }
+    } else {
+      unanswered++;
+      expEl.innerHTML = `<span class="ans-wrong">Tidak dijawab</span> (Jawaban: <strong>${LABELS[item.ans]}</strong>) — ${item.exp}`;
+    }
+  });
+  const nilai = score*10;
+  const grade = nilai>=90?'🏆 Luar Biasa!':nilai>=70?'👍 Bagus!':nilai>=50?'😊 Cukup':'📚 Perlu Belajar Lagi';
+  const r = document.getElementById(`kresult${topicIdx}`);
+  r.style.display='block';
+  document.getElementById(`kscore${topicIdx}`).textContent = nilai;
+  document.getElementById(`kgrade${topicIdx}`).textContent = grade;
+  document.getElementById(`kdetail${topicIdx}`).textContent = `Benar: ${score} | Salah: ${questions.length-score-unanswered} | Tidak dijawab: ${unanswered}`;
+  r.scrollIntoView({behavior:'smooth'});
+}
+
+function resetKuis(topicIdx) {
+  document.querySelectorAll(`input[name^="t${topicIdx}q"]`).forEach(i => i.checked=false);
+  document.querySelectorAll(`[id^="exp${topicIdx}-"]`).forEach(e => { e.innerHTML=''; e.style.display='none'; });
+  document.getElementById(`kresult${topicIdx}`).style.display='none';
+  document.getElementById(`pfill${topicIdx}`).style.width='0%';
+  document.getElementById(`plabel${topicIdx}`).textContent=`0 / ${QUIZ_DATA[topicIdx].length} dijawab`;
+}
+
+// ─── INIT ─────────────────────────────────────────────────────
+document.querySelectorAll('.topic-btn').forEach((b,i) => {
+  b.style.setProperty('--active', TOPIC_COLORS[i]);
+});
+document.documentElement.style.setProperty('--active', TOPIC_COLORS[0]);
+// Build all quiz containers upfront (now at panel index 3)
+for(let i=0;i<5;i++) buildKuis(i);
+// Init lab for first topic visible
+setTimeout(() => initLab(0), 100);
+
+// ─── CALCULATOR FUNCTIONS ─────────────────────────────────────
+function calcLavoisier() {
+  const mg = parseFloat(document.getElementById('c0-mg').value) || 0;
+  const o  = parseFloat(document.getElementById('c0-o').value)  || 0;
+  document.getElementById('c0-result').textContent = (mg + o).toFixed(2);
+}
+function calcProust() {
+  const h = parseFloat(document.getElementById('c1-h').value) || 0;
+  const o = h * 8;
+  const w = h + o;
+  document.getElementById('c1-o').textContent  = o.toFixed(2);
+  document.getElementById('c1-rh').textContent = h.toFixed(1);
+  document.getElementById('c1-ro').textContent = o.toFixed(1);
+  document.getElementById('c1-rw').textContent = w.toFixed(1);
+}
+function calcDalton() {
+  const o1 = parseFloat(document.getElementById('c2-o1').value) || 1;
+  const o2 = parseFloat(document.getElementById('c2-o2').value) || 1;
+  function gcd(a,b){return b===0?a:gcd(b,a%b);}
+  const a = Math.round(o1*100), b = Math.round(o2*100);
+  const g = gcd(a,b);
+  document.getElementById('c2-ratio').textContent = `${a/g} : ${b/g}`;
+}
+function calcGayLussac() {
+  const h = parseFloat(document.getElementById('c3-h').value) || 0;
+  const o = h / 2;
+  document.getElementById('c3-o').textContent  = o.toFixed(1);
+  document.getElementById('c3-rh').textContent = h.toFixed(1);
+  document.getElementById('c3-ro').textContent = o.toFixed(1);
+  document.getElementById('c3-rw').textContent = h.toFixed(1);
+}
+function calcAvogadro() {
+  const v   = parseFloat(document.getElementById('c4-v').value) || 0;
+  const mol = v / 22.4;
+  const cnt = (mol * 6.022).toFixed(3);
+  document.getElementById('c4-mol').textContent   = mol.toFixed(3);
+  document.getElementById('c4-count').textContent = `${cnt} × 10²³`;
+}
+</script>
+</body>
+</html>
